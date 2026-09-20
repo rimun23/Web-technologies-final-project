@@ -1,10 +1,3 @@
-/* ==========================================================================
-   EliteSushi - Base Stylesheet
-   ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   1. CSS Custom Properties / Design Tokens
-   -------------------------------------------------------------------------- */
 :root {
     --color-primary: #d90429;
     --color-primary-hover: #ef233c;
@@ -46,10 +39,6 @@
     
     --container-max-width: 1140px;
 }
-
-/* --------------------------------------------------------------------------
-   2. CSS Reset & Box Sizing
-   -------------------------------------------------------------------------- */
 *,
 *::before,
 *::after {
@@ -72,10 +61,6 @@ body {
     display: flex;
     flex-direction: column;
 }
-
-/* --------------------------------------------------------------------------
-   3. Typography
-   -------------------------------------------------------------------------- */
 h1, h2, h3, h4, h5, h6 {
     color: var(--color-text-heading);
     font-weight: 700;
@@ -118,10 +103,6 @@ img {
     display: inline-block;
     vertical-align: middle;
 }
-
-/* --------------------------------------------------------------------------
-   4. Header & Navigation
-   -------------------------------------------------------------------------- */
 header {
     background-color: var(--color-header-bg);
     box-shadow: var(--shadow-md);
@@ -163,10 +144,6 @@ header nav a:hover {
     color: #ffffff;
     background-color: rgba(255, 255, 255, 0.12);
 }
-
-/* --------------------------------------------------------------------------
-   5. Main Content Container
-   -------------------------------------------------------------------------- */
 main,
 section.main {
     max-width: var(--container-max-width);
@@ -198,10 +175,6 @@ main > h1:first-child::after {
     background: var(--color-primary);
     border-radius: var(--radius-full);
 }
-
-/* --------------------------------------------------------------------------
-   6. Form & Authentication Pages (Register, Login)
-   -------------------------------------------------------------------------- */
 section.main:has(input[type="submit"]),
 section.main:has(#username) {
     max-width: 450px;
@@ -296,10 +269,6 @@ button:has(a) {
 button:has(a):hover {
     background-color: #3f4263;
 }
-
-/* --------------------------------------------------------------------------
-   7. Menu Page (Sets, Drinks, Pizza, French Fries, Nuggets)
-   -------------------------------------------------------------------------- */
 section.sets,
 section.drinks,
 section.strips,
@@ -393,16 +362,11 @@ article.french p {
     margin-bottom: 0.35rem;
 }
 
-/* Price highlighting */
 p:has(span.price),
 article p:nth-of-type(2) {
     font-weight: 600;
     color: var(--color-primary);
 }
-
-/* --------------------------------------------------------------------------
-   8. Reviews Page
-   -------------------------------------------------------------------------- */
 main:has(section.review) {
     display: flex;
     flex-direction: column;
@@ -453,10 +417,6 @@ section.review img[src*="star"] {
     height: 18px;
     margin-right: 2px;
 }
-
-/* --------------------------------------------------------------------------
-   9. FAQ Page
-   -------------------------------------------------------------------------- */
 article.faq-item {
     background-color: var(--color-bg-surface);
     border-radius: var(--radius-md);
@@ -486,10 +446,6 @@ p.faq-answer {
     font-size: 0.95rem;
     margin-bottom: 0;
 }
-
-/* --------------------------------------------------------------------------
-   10. Cart Page
-   -------------------------------------------------------------------------- */
 ul.cart-items {
     list-style: none;
     margin-bottom: 2rem;
@@ -576,9 +532,6 @@ button.cart-checkout {
     padding: 0.85rem 2rem;
 }
 
-/* --------------------------------------------------------------------------
-   11. Profile Page
-   -------------------------------------------------------------------------- */
 .profile-container {
     display: grid;
     grid-template-columns: 280px 1fr;
@@ -661,10 +614,6 @@ section.bonus-section h3 {
     letter-spacing: 1px;
     font-weight: 600;
 }
-
-/* --------------------------------------------------------------------------
-   12. Footer & Contacts Table
-   -------------------------------------------------------------------------- */
 footer {
     background-color: var(--color-bg-dark);
     color: var(--color-text-light);
@@ -732,9 +681,6 @@ footer td img {
     border-radius: var(--radius-sm);
 }
 
-/* --------------------------------------------------------------------------
-   13. Responsive Media Queries
-   -------------------------------------------------------------------------- */
 @media (max-width: 768px) {
     header nav {
         justify-content: center;
