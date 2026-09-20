@@ -1,0 +1,761 @@
+/* ==========================================================================
+   EliteSushi - Base Stylesheet
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CSS Custom Properties / Design Tokens
+   -------------------------------------------------------------------------- */
+:root {
+    --color-primary: #d90429;
+    --color-primary-hover: #ef233c;
+    --color-secondary: #2b2d42;
+    --color-accent: #f77f00;
+    --color-gold: #ffb703;
+    
+    --color-bg-body: #f8f9fa;
+    --color-bg-surface: #ffffff;
+    --color-bg-surface-alt: #f1f3f5;
+    --color-bg-dark: #1a1a24;
+    --color-header-bg: #1e1e28;
+    
+    --color-text-main: #212529;
+    --color-text-muted: #6c757d;
+    --color-text-light: #f8f9fa;
+    --color-text-heading: #111827;
+    
+    --color-border: #e9ecef;
+    --color-border-dark: #343a40;
+    --color-success: #2a9d8f;
+    --color-danger: #e63946;
+
+    --font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --font-size-base: 16px;
+    --line-height-base: 1.6;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+    --transition-fast: 0.15s ease-in-out;
+    --transition-base: 0.25s ease-in-out;
+    
+    --container-max-width: 1140px;
+}
+
+/* --------------------------------------------------------------------------
+   2. CSS Reset & Box Sizing
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: var(--font-size-base);
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family);
+    line-height: var(--line-height-base);
+    color: var(--color-text-main);
+    background-color: var(--color-bg-body);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   3. Typography
+   -------------------------------------------------------------------------- */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-text-heading);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+}
+
+h1 {
+    font-size: 2rem;
+    letter-spacing: -0.5px;
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+p {
+    margin-bottom: 0.75rem;
+    color: var(--color-text-main);
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-primary-hover);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* --------------------------------------------------------------------------
+   4. Header & Navigation
+   -------------------------------------------------------------------------- */
+header {
+    background-color: var(--color-header-bg);
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header nav {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+header nav img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-primary);
+    margin-right: 1rem;
+    box-shadow: var(--shadow-sm);
+}
+
+header nav a {
+    color: var(--color-text-light);
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+header nav a:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   5. Main Content Container
+   -------------------------------------------------------------------------- */
+main,
+section.main {
+    max-width: var(--container-max-width);
+    width: 100%;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    flex: 1 0 auto;
+}
+
+section.main > h1:first-child,
+main > h1:first-child {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: var(--color-secondary);
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+section.main > h1:first-child::after,
+main > h1:first-child::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+}
+
+/* --------------------------------------------------------------------------
+   6. Form & Authentication Pages (Register, Login)
+   -------------------------------------------------------------------------- */
+section.main:has(input[type="submit"]),
+section.main:has(#username) {
+    max-width: 450px;
+    background-color: var(--color-bg-surface);
+    padding: 2.5rem 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-border);
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+}
+
+section.main div {
+    margin-bottom: 1.25rem;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--color-secondary);
+    font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: inherit;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-surface);
+    color: var(--color-text-main);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(217, 4, 41, 0.15);
+}
+
+button,
+input[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    box-shadow: var(--shadow-sm);
+    text-transform: capitalize;
+}
+
+button:hover,
+input[type="submit"]:hover {
+    background-color: var(--color-primary-hover);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+button:active,
+input[type="submit"]:active {
+    transform: translateY(0);
+}
+
+button a,
+button .nav-menu-button {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* Secondary Button Styling */
+button:has(a) {
+    background-color: var(--color-secondary);
+    margin-left: 0.5rem;
+}
+
+button:has(a):hover {
+    background-color: #3f4263;
+}
+
+/* --------------------------------------------------------------------------
+   7. Menu Page (Sets, Drinks, Pizza, French Fries, Nuggets)
+   -------------------------------------------------------------------------- */
+section.sets,
+section.drinks,
+section.strips,
+section.french,
+section.pizza {
+    margin-bottom: 3rem;
+}
+
+section.sets > h1,
+section.drinks > h1,
+section.strips > h1,
+section.french > h1,
+section.pizza > h1 {
+    font-size: 1.6rem;
+    color: var(--color-secondary);
+    border-left: 4px solid var(--color-primary);
+    padding-left: 0.75rem;
+    margin: 2rem 0 1.25rem 0;
+}
+
+/* Grid layout for cards */
+section.sets,
+section.drinks,
+section.pizza,
+section.strips,
+section.french {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+section.sets > h1,
+section.drinks > h1,
+section.strips > h1,
+section.french > h1,
+section.pizza > h1 {
+    grid-column: 1 / -1;
+}
+
+article.set,
+article.drink,
+article.pizza,
+article.nuggets,
+article.french {
+    background-color: var(--color-bg-surface);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    overflow: hidden;
+}
+
+article.set:hover,
+article.drink:hover,
+article.pizza:hover,
+article.nuggets:hover,
+article.french:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+article.set img,
+article.drink img,
+article.pizza img,
+article.nuggets img,
+article.french img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    margin-bottom: 0.85rem;
+}
+
+figcaption {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--color-text-heading);
+    margin-bottom: 0.5rem;
+}
+
+article.set p,
+article.drink p,
+article.pizza p,
+article.nuggets p,
+article.french p {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.35rem;
+}
+
+/* Price highlighting */
+p:has(span.price),
+article p:nth-of-type(2) {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* --------------------------------------------------------------------------
+   8. Reviews Page
+   -------------------------------------------------------------------------- */
+main:has(section.review) {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+section.review {
+    background-color: var(--color-bg-surface);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto 1fr;
+    column-gap: 1.25rem;
+    align-items: center;
+}
+
+section.review > img:first-of-type {
+    grid-row: 1 / span 2;
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-border);
+}
+
+section.review article {
+    grid-column: 1 / -1;
+    margin-top: 0.75rem;
+}
+
+section.review article h1 {
+    font-size: 1.15rem;
+    margin-bottom: 0.35rem;
+    color: var(--color-secondary);
+}
+
+section.review article p {
+    font-size: 0.95rem;
+    color: var(--color-text-main);
+    line-height: 1.6;
+}
+
+section.review img[src*="star"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   9. FAQ Page
+   -------------------------------------------------------------------------- */
+article.faq-item {
+    background-color: var(--color-bg-surface);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--color-primary);
+    box-shadow: var(--shadow-sm);
+    border-top: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+article.faq-item:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow-md);
+}
+
+h3.faq-question {
+    font-size: 1.1rem;
+    color: var(--color-secondary);
+    margin-bottom: 0.5rem;
+}
+
+p.faq-answer {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   10. Cart Page
+   -------------------------------------------------------------------------- */
+ul.cart-items {
+    list-style: none;
+    margin-bottom: 2rem;
+}
+
+li.cart-item {
+    background-color: var(--color-bg-surface);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+}
+
+li.cart-item img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+p.cart-item-name {
+    font-weight: 600;
+    font-size: 1.05rem;
+    flex: 1;
+    margin-bottom: 0;
+}
+
+p.cart-item-price {
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0;
+    font-size: 1.05rem;
+}
+
+input.cart-item-qty {
+    width: 65px;
+    padding: 0.4rem;
+    text-align: center;
+}
+
+button.cart-item-remove {
+    background-color: transparent;
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger);
+    padding: 0.4rem 0.85rem;
+    font-size: 0.85rem;
+    box-shadow: none;
+}
+
+button.cart-item-remove:hover {
+    background-color: var(--color-danger);
+    color: #ffffff;
+}
+
+article.cart-summary {
+    background-color: var(--color-bg-surface);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+article.cart-summary p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+span.cart-total {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+button.cart-checkout {
+    font-size: 1.05rem;
+    padding: 0.85rem 2rem;
+}
+
+/* --------------------------------------------------------------------------
+   11. Profile Page
+   -------------------------------------------------------------------------- */
+.profile-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+aside.sidebar {
+    background-color: var(--color-bg-surface);
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+}
+
+aside.sidebar .avatar {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: var(--radius-full);
+    border: 4px solid var(--color-primary);
+    margin: 0 auto 1.25rem auto;
+    display: block;
+}
+
+aside.sidebar h2 {
+    font-size: 1.3rem;
+    color: var(--color-secondary);
+    margin-bottom: 0;
+}
+
+main.content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+}
+
+section.info-section,
+section.bonus-section {
+    background-color: var(--color-bg-surface);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+}
+
+section.info-section h3,
+section.bonus-section h3 {
+    color: var(--color-secondary);
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.bonus-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffb703, #fb8500);
+    color: #ffffff;
+    padding: 1.25rem 2rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.bonus-amount {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.bonus-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   12. Footer & Contacts Table
+   -------------------------------------------------------------------------- */
+footer {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-light);
+    padding: 2.5rem 1.5rem 2rem 1.5rem;
+    margin-top: auto;
+}
+
+footer h2 {
+    color: var(--color-text-light);
+    text-align: center;
+    margin-bottom: 1.25rem;
+    font-size: 1.4rem;
+}
+
+footer table {
+    width: 100%;
+    max-width: 550px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+footer caption {
+    caption-side: top;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+}
+
+footer th,
+footer td {
+    padding: 0.85rem 1.25rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-text-light);
+}
+
+footer th {
+    background-color: rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+footer td {
+    font-size: 0.95rem;
+}
+
+footer td a {
+    display: inline-block;
+    transition: transform var(--transition-fast);
+}
+
+footer td a:hover {
+    transform: scale(1.15);
+}
+
+footer td img {
+    border-radius: var(--radius-sm);
+}
+
+/* --------------------------------------------------------------------------
+   13. Responsive Media Queries
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    header nav {
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    header nav a {
+        font-size: 0.85rem;
+        padding: 0.35rem 0.6rem;
+    }
+
+    .profile-container {
+        grid-template-columns: 1fr;
+    }
+
+    li.cart-item {
+        flex-wrap: wrap;
+    }
+
+    article.cart-summary {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+}
