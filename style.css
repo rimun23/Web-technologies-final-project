@@ -174,6 +174,7 @@ section.main {
     margin: 2rem auto;
     padding: 0 1.5rem;
     flex: 1 0 auto;
+
 }
 
 section.main > h1:first-child,
@@ -758,4 +759,33 @@ footer td img {
         gap: 1rem;
         text-align: center;
     }
+}
+#index{
+    height: 90vh;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url(./img/image_5-removebg-preview.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 0;
+    padding: 0;
+
+}
+#index article{
+    background-color: rgba(0, 0, 0, 0.197);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+    padding: 10px;
+    border-radius: 100px;
+}
+#index article h1{
+    font-size: 45px;
 }
