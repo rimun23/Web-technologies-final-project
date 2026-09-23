@@ -248,7 +248,6 @@ button .nav-menu-button {
     text-decoration: none;
 }
 
-/* Secondary Button Styling */
 button:has(a) {
     background-color: var(--color-secondary);
     margin-left: 0.5rem;
@@ -276,7 +275,6 @@ section.pizza > h1 {
     margin: 2rem 0 1.25rem 0;
 }
 
-/* Grid layout for cards */
 section.sets,
 section.drinks,
 section.pizza,
@@ -698,7 +696,6 @@ footer td img {
     width: 100%;
     max-width: 100%;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     background-image: url(./img/image_5-removebg-preview.png);
@@ -707,7 +704,6 @@ footer td img {
     background-position: center;
     margin: 0;
     padding: 0;
-
 }
 #index article{
     background-color: rgba(0, 0, 0, 0.197);
