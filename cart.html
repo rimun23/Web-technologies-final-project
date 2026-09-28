@@ -7,54 +7,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart</title>
     <link rel="icon" href="./img/logo_title.png">
-    <link rel="stylesheet" href="./style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <nav><img src="./img/brand.jpg" alt="" width="150px" height="150px"><a href="./index.html">Main</a><a href="./menu.html">Menu</a><a href="./review.html">Reviews</a><a href="./faq.html">FAQ</a><a href="./cart.html">Cart</a><a href="./profile.html">Profile</a><a href="register.html">Sign up/Sign in</a><a href="colophon.html">Colophon</a></nav>
-    </header>
+<header class="sticky-top shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid px-3 px-lg-4">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="./index.html">
+                <img src="./img/brand.jpg" alt="EliteSushi Logo" class="brand-logo rounded-circle border border-danger border-2" width="48" height="48">
+                <span class="fw-bold text-light d-none d-sm-inline">Elite Sushi</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-center text-lg-start gap-1">
+                    <li class="nav-item"><a class="nav-link" href="./index.html">Main</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./menu.html">Menu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./review.html">Reviews</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./faq.html">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link active fw-semibold" href="./cart.html">Cart</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./profile.html">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="register.html">Sign up/Sign in</a></li>
+                    <li class="nav-item"><a class="nav-link" href="colophon.html">Colophon</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
 
-    <section class="main">
-        <h1>Your Cart</h1>
-        <ul class="cart-items">
-            <li class="cart-item">
-                <img src="./img/placeholder.png" alt="" width="80px" height="80px">
-                <p class="cart-item-name">Item name</p>
-                <p class="cart-item-price">0 ₸</p>
-                <input type="number" class="cart-item-qty" value="1" min="1">
-                <button class="cart-item-remove">Remove</button>
-            </li>
-        </ul>
+<section class="main py-5 flex-grow-1">
+    <div class="container">
+        <h1 class="h2 fw-bold text-center text-md-start mb-4">Your Cart</h1>
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                <ul class="cart-items list-unstyled mb-4">
+                    <li class="cart-item card shadow-sm p-3 mb-3 border-0 bg-white rounded-3">
+                        <div class="row align-items-center g-3">
+                            <div class="col-auto">
+                                <img src="./img/placeholder.png" alt="Cart item placeholder" class="cart-item-img rounded" width="70" height="70">
+                            </div>
+                            <div class="col-12 col-sm">
+                                <p class="cart-item-name fw-semibold fs-5 mb-0 text-dark">Morimoto Set (Sample Item)</p>
+                            </div>
+                            <div class="col-6 col-sm-auto text-sm-end">
+                                <p class="cart-item-price fw-bold text-danger fs-5 mb-0">6,250 ₸</p>
+                            </div>
+                            <div class="col-6 col-sm-auto">
+                                <input type="number" class="cart-item-qty form-control form-control-sm text-center mx-auto" value="1" min="1">
+                            </div>
+                            <div class="col-12 col-sm-auto">
+                                <button class="cart-item-remove btn btn-outline-danger btn-sm w-100">Remove</button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
 
-        <article class="cart-summary">
-            <p>Total: <span class="cart-total">0 ₸</span></p>
-            <button class="cart-checkout">Checkout</button>
-        </article>
-    </section>
+                <article class="cart-summary card shadow-sm p-4 border-0 bg-white rounded-3">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+                        <p class="fs-4 fw-bold mb-0 text-dark">Total: <span class="cart-total text-danger">6,250 ₸</span></p>
+                        <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-sm-auto justify-content-end">
+                            <button class="btn btn-secondary btn-sm disabled" disabled>Promo applied</button>
+                            <button class="cart-checkout btn btn-danger btn-lg shadow-sm">Checkout</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <footer>
-        <h2>Contacts</h2>
-        <table border="2px">
-            <caption>
-                Our links
-            </caption>
-            <thead>
+<footer class="bg-dark text-light py-4 mt-auto">
+    <div class="container">
+        <h2 class="text-center text-light mb-3 fs-3">Contacts</h2>
+        <div class="table-responsive col-12 col-md-8 col-lg-6 mx-auto">
+            <table class="table table-dark table-bordered table-hover text-center align-middle mb-0 shadow-sm">
+                <caption class="text-secondary text-center">Our links</caption>
+                <thead class="table-secondary text-dark">
                 <tr>
-                    <th scope="col">For business</th>
-                    <th scope="col">Our social media</th>
+                    <th scope="col" class="text-uppercase fw-semibold">For business</th>
+                    <th scope="col" class="text-uppercase fw-semibold">Our social media</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 <tr>
-                    <td>87477203030</td>
-                    <td><a href="https://www.instagram.com/elite_sushi_astana/"><img src="./img/Instagram_icon.png" alt="" width="40px" height="40px"></a></td>
+                    <td class="align-middle">87477203030</td>
+                    <td class="align-middle"><a href="https://www.instagram.com/elite_sushi_astana/" class="d-inline-block"><img src="./img/Instagram_icon.png" alt="Instagram" width="40" height="40" class="rounded"></a></td>
                 </tr>
                 <tr>
-                    <td>87753519228</td>
-                    <td><a href="wa.me/+77477203030"><img src="./img/3046121.png" alt="" width="40px" height="40px"></a></td>
+                    <td class="align-middle">87753519228</td>
+                    <td class="align-middle"><a href="https://wa.me/+77477203030" class="d-inline-block"><img src="./img/3046121.png" alt="WhatsApp" width="40" height="40" class="rounded"></a></td>
                 </tr>
-            </tbody>
-        </table>
-    </footer>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</footer>
 </body>
 </html>
