@@ -27,6 +27,50 @@
                             <label class="btn btn-outline-danger w-100 fw-semibold" for="pickup">Self-pickup</label>
                         </div>
                     </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <input type="radio" class="btn-check" name="address" id="address1" checked>
+                            <label class="btn btn-outline-danger w-100 fw-semibold" for="address1">Bauyrzhan Momyshuly 2a</label>
+                        </div>
+                        <div class="col-6">
+                            <input type="radio" class="btn-check" name="address" id="address2">
+                            <label class="btn btn-outline-danger w-100 fw-semibold" for="address2">Syganak 11</label>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <label for="orderTime" class="form-label small fw-semibold text-danger">Delivery time</label>
+                        <select class="form-select border-secondary-subtle" id="orderTime" name="order_time" required>
+                            <option value="asap" selected>As soon as possible (~35–45 min.)</option>
+                            <optgroup label="Today (step by 30 minutes)">
+                                <option value="10:30">10:30</option>
+                                <option value="11:00">11:00</option>
+                                <option value="11:30">11:30</option>
+                                <option value="12:00">12:00</option>
+                                <option value="12:30">12:30</option>
+                                <option value="13:00">13:00</option>
+                                <option value="13:30">13:30</option>
+                                <option value="14:00">14:00</option>
+                                <option value="14:30">14:30</option>
+                                <option value="15:00">15:00</option>
+                                <option value="15:30">15:30</option>
+                                <option value="16:00">16:00</option>
+                                <option value="16:30">16:30</option>
+                                <option value="17:00">17:00</option>
+                                <option value="17:30">17:30</option>
+                                <option value="18:00">18:00</option>
+                                <option value="18:30">18:30</option>
+                                <option value="19:00">19:00</option>
+                                <option value="19:30">19:30</option>
+                                <option value="20:00">20:00</option>
+                                <option value="20:30">20:30</option>
+                                <option value="21:00">21:00</option>
+                                <option value="21:30">21:30</option>
+                                <option value="22:00">22:00</option>
+                                <option value="22:30">22:30</option>
+                                <option value="23:00">23:00</option>
+                            </optgroup>
+                        </select>
+                    </div>
                     <hr class="border-secondary-subtle my-3">
                     <h6 class="fw-bold text-danger text-uppercase small mb-2">1. Contacts</h6>
                     <div class="row g-2 mb-3">
@@ -36,7 +80,7 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <label class="form-label small fw-semibold mb-1" for="phone">Phone</label>
-                            <input type="tel" id="phone" name="phone" class="form-control" placeholder="+7 999 000-00-00" required>
+                            <input type="tel" id="phone" name="phone" class="form-control" placeholder="+7 777 777-77-77" required>
                         </div>
                     </div>
                     <h6 class="fw-bold text-danger text-uppercase small mb-2">2. Address to delivery</h6>
