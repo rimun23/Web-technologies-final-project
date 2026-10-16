@@ -41,34 +41,13 @@
         <h1 class="h2 fw-bold text-center text-md-start mb-4">Your Cart</h1>
         <div class="row justify-content-center">
             <div class="col-12 col-lg-10">
-                <ul class="cart-items list-unstyled mb-4">
-                    <li class="cart-item card shadow-sm p-3 mb-3 border-0 bg-white rounded-3">
-                        <div class="row align-items-center g-3">
-                            <div class="col-auto">
-                                <img src="./img/placeholder.png" alt="Cart item placeholder" class="cart-item-img rounded" width="70" height="70">
-                            </div>
-                            <div class="col-12 col-sm">
-                                <p class="cart-item-name fw-semibold fs-5 mb-0 text-dark">Morimoto Set (Sample Item)</p>
-                            </div>
-                            <div class="col-6 col-sm-auto text-sm-end">
-                                <p class="cart-item-price fw-bold text-danger fs-5 mb-0">6,250 ₸</p>
-                            </div>
-                            <div class="col-6 col-sm-auto">
-                                <input type="number" class="cart-item-qty form-control form-control-sm text-center mx-auto" value="1" min="1">
-                            </div>
-                            <div class="col-12 col-sm-auto">
-                                <button class="cart-item-remove btn btn-outline-danger btn-sm w-100">Remove</button>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
+                <ul class="cart-items list-unstyled mb-4"></ul>
 
                 <article class="cart-summary card shadow-sm p-4 border-0 bg-white rounded-3">
                     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
-                        <p class="fs-4 fw-bold mb-0 text-dark">Total: <span class="cart-total text-danger">6,250 ₸</span></p>
+                        <p class="fs-4 fw-bold mb-0 text-dark">Total: <span class="cart-total text-danger">0 ₸</span></p>
                         <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-sm-auto justify-content-end">
-                            <button class="btn btn-secondary btn-sm disabled" disabled>Promo applied</button>
-                            <button class="cart-checkout btn btn-danger btn-lg shadow-sm"><a href="./order.html" class="text-decoration-none text-reset">Checkout</a></button>
+                            <a href="./order.html" class="cart-checkout btn btn-danger btn-lg shadow-sm">Checkout</a>
                         </div>
                     </div>
                 </article>
@@ -103,5 +82,8 @@
         </div>
     </div>
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="cart.js"></script>
 </body>
 </html>
