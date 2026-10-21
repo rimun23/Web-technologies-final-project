@@ -1,6 +1,3 @@
-/* Elite Sushi — shopping cart (vanilla JS + localStorage)
-   menu.html: кнопки "Add to cart" добавляют товар
-   cart.html: рисует товары в <ul class="cart-items"> и считает .cart-total */
 (function () {
   'use strict';
 
