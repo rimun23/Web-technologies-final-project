@@ -35,35 +35,56 @@
         </div>
     </nav>
 </header>
+
 <section class="main py-5 flex-grow-1">
     <div class="container">
         <h1 class="h2 fw-bold text-center text-md-start mb-4">User Profile</h1>
         <div class="row g-4 profile-container align-items-start">
             <div class="col-12 col-md-4 col-lg-3">
                 <aside class="sidebar card shadow-sm p-4 border-0 text-center bg-white rounded-3">
-                    <img src="img/avatar.jpg" alt="Avatar" width="140" height="140" class="avatar avatar-img rounded-circle border border-3 border-danger mx-auto mb-3">
-                    <h2 class="h5 fw-bold text-dark mb-0">Alimger Toleugal</h2>
+                    <img src="./img/avatar.jpg" alt="Avatar" width="140" height="140" class="avatar avatar-img rounded-circle border border-3 border-danger mx-auto mb-3">
+                    <h2 class="h5 fw-bold text-dark mb-0" id="profileUsername">Loading...</h2>
                 </aside>
             </div>
             <div class="col-12 col-md-8 col-lg-9">
                 <main class="content">
                     <div class="row g-4">
-                        <div class="col-12 col-lg-6">
+                        <div class="col-12 col-lg-7">
                             <section class="info-section card shadow-sm p-4 border-0 bg-white rounded-3 h-100">
                                 <h3 class="h5 fw-bold text-dark border-bottom pb-2 mb-3">My Profile</h3>
-                                <p class="mb-2"><span class="fw-semibold text-secondary">Email:</span> aad@yoyo.com</p>
-                                <p class="mb-0"><span class="fw-semibold text-secondary">Cell Number:</span> +7 (776) 914-92-85</p>
-                                <p class="mb-0"><span class="fw-semibold text-secondary">Address:</span> Turar Ryskulov 16/2</p>
+                                
+                                <div class="mb-3">
+                                    <span class="fw-semibold text-secondary d-block small mb-1">Email:</span>
+                                    <p class="fs-6 fw-bold text-dark mb-0" id="profileEmail">-</p>
+                                </div>
+                                
+                                <form id="profileForm" action="javascript:void(0);">
+                                    <div class="mb-3">
+                                        <label for="profilePhone" class="form-label fw-semibold text-secondary small mb-1">Cell Number:</label>
+                                        <input type="text" id="profilePhone" class="form-control" placeholder="Enter your phone number (e.g. +7 777 123 45 67)">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="profileAddress" class="form-label fw-semibold text-secondary small mb-1">Address:</label>
+                                        <input type="text" id="profileAddress" class="form-control" placeholder="Enter your address (street, house, apartment)">
+                                    </div>
+
+                                    <div id="saveAlert" class="alert alert-success py-2 px-3 small d-none" role="alert">
+                                        Information saved successfully!
+                                    </div>
+
+                                    <button type="submit" class="btn btn-danger btn-sm px-4 fw-semibold shadow-sm">Save Details</button>
+                                </form>
                             </section>
                         </div>
-                        <div class="col-12 col-lg-6">
+                        <div class="col-12 col-lg-5">
                             <section class="bonus-section card shadow-sm p-4 border-0 bg-white rounded-3 h-100 d-flex flex-column justify-content-between">
                                 <h3 class="h5 fw-bold text-dark border-bottom pb-2 mb-3">Bonuses</h3>
                                 <div class="bonus-card text-white text-center p-3 rounded-3 shadow-sm mb-3">
-                                    <div class="bonus-amount fs-1 fw-bold lh-1">67</div>
+                                    <div class="bonus-amount fs-1 fw-bold lh-1" id="profileBonuses">0</div>
                                     <div class="bonus-label small fw-semibold text-uppercase letter-spacing-1">bonuses</div>
                                 </div>
-                                <button class="btn btn-warning fw-bold text-dark w-100 shadow-sm mt-auto">use bonuses</button>
+                                <button id="useBonusesBtn" class="btn btn-warning fw-bold text-dark w-100 shadow-sm mt-auto">use bonuses</button>
                             </section>
                         </div>
                     </div>
@@ -72,6 +93,7 @@
         </div>
     </div>
 </section>
+
 <footer class="bg-dark text-light py-4 mt-auto">
     <div class="container">
         <h2 class="text-center text-light mb-3 fs-3">Contacts</h2>
@@ -98,5 +120,9 @@
         </div>
     </div>
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="auth.js"></script>
+    <script src="cart.js"></script>
 </body>
 </html>

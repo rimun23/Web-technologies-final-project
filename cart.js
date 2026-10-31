@@ -1,180 +1,163 @@
-(function () {
-  'use strict';
+// cart.js — Управление корзиной и бонусами 1:1
 
-  var KEY = 'eliteSushiCart';
+const CART_STORAGE_KEY = 'elite_sushi_cart';
+const APPLIED_BONUS_KEY = 'elite_sushi_applied_bonuses';
 
-  function load() {
-    try {
-      var data = JSON.parse(localStorage.getItem(KEY));
-      return Array.isArray(data) ? data : [];
-    } catch (e) { return []; }
-  }
-  function save(cart) {
-    try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch (e) {}
-    updateBadge();
-  }
-
-  function money(n) { return n.toLocaleString('en-US') + ' ₸'; }
-  function count(cart) { return cart.reduce(function (s, i) { return s + i.qty; }, 0); }
-  function total(cart) { return cart.reduce(function (s, i) { return s + i.price * i.qty; }, 0); }
-  function el(tag, cls, text) {
-    var e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text !== undefined) e.textContent = text;
-    return e;
-  }
-
-  function addItem(item) {
-    var cart = load();
-    var found = cart.find(function (i) { return i.id === item.id; });
-    if (found) found.qty += 1;
-    else cart.push({ id: item.id, name: item.name, price: item.price, img: item.img, qty: 1 });
-    save(cart);
-  }
-  function setQty(id, qty) {
-    var cart = load();
-    var item = cart.find(function (i) { return i.id === id; });
-    if (!item) return null;
-    item.qty = Math.max(1, Math.min(99, qty || 1));
-    save(cart);
-    return item;
-  }
-  function removeItem(id) {
-    save(load().filter(function (i) { return i.id !== id; }));
-  }
-
-  function updateBadge() {
-    var link = document.querySelector('a.nav-link[href$="cart.html"]');
-    if (!link) return;
-    var badge = link.querySelector('.cart-badge');
-    if (!badge) {
-      badge = el('span', 'cart-badge badge rounded-pill bg-danger ms-1');
-      link.appendChild(badge);
+// Тестовый товар по умолчанию, если корзина пустая (Morimoto Set как в ТЗ)
+function getCartItems() {
+    const stored = localStorage.getItem(CART_STORAGE_KEY);
+    if (!stored) {
+        const defaultCart = [
+            { id: 1, name: '"Morimoto" Set', price: 6250, count: 1, img: './img/Set Morimoto.jpg' }
+        ];
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(defaultCart));
+        return defaultCart;
     }
-    var n = count(load());
-    badge.textContent = n;
-    badge.style.display = n ? '' : 'none';
-  }
+    return JSON.parse(stored);
+}
 
+function saveCartItems(items) {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+}
 
-  function toast(message) {
-    var t = el('div', 'bg-dark text-light rounded shadow px-3 py-2', message);
-    t.setAttribute('role', 'status');
-    t.style.cssText = 'position:fixed;right:16px;bottom:16px;z-index:2000;opacity:0;transition:opacity .2s';
-    document.body.appendChild(t);
-    requestAnimationFrame(function () { t.style.opacity = '1'; });
-    setTimeout(function () {
-      t.style.opacity = '0';
-      setTimeout(function () { t.remove(); }, 250);
-    }, 1600);
-  }
+function getAppliedBonuses() {
+    return parseInt(localStorage.getItem(APPLIED_BONUS_KEY) || '0', 10);
+}
 
-  function initMenu() {
-    document.querySelectorAll('.card a[href$="cart.html"]').forEach(function (a) {
-      var card = a.closest('.card');
-      var titleEl = card.querySelector('.card-title');
-      var priceEl = card.querySelector('.text-danger');
-      var imgEl = card.querySelector('img');
-      if (!titleEl || !priceEl) return;
+function setAppliedBonuses(val) {
+    localStorage.setItem(APPLIED_BONUS_KEY, val.toString());
+}
 
-      var price = parseInt(priceEl.textContent.replace(/\D/g, ''), 10);
-      if (!price) return;
-      var name = titleEl.textContent.trim();
+// Рендер корзины
+function renderCart() {
+    const listEl = document.querySelector('.cart-items');
+    const subtotalEl = document.getElementById('cartSubtotal');
+    const discountEl = document.getElementById('cartDiscount');
+    const discountRow = document.getElementById('discountRow');
+    const finalTotalEl = document.getElementById('cartFinalTotal');
+    const bonusSection = document.getElementById('bonusSection');
 
-      var btn = el('button', a.className, a.textContent);
-      btn.type = 'button';
-      btn.addEventListener('click', function () {
-        addItem({
-          id: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-          name: name,
-          price: price,
-          img: imgEl ? imgEl.getAttribute('src') : ''
-        });
-        toast('"' + name + '" added to cart');
-      });
-      a.replaceWith(btn);
-    });
-  }
+    if (!listEl) return;
 
-  function renderTotal() {
-    var cart = load();
-    var totalEl = document.querySelector('.cart-total');
-    if (totalEl) totalEl.textContent = money(total(cart));
-    var checkout = document.querySelector('.cart-checkout');
-    if (checkout) checkout.classList.toggle('disabled', !cart.length);
-  }
+    const items = getCartItems();
+    listEl.innerHTML = '';
 
-  function buildItem(item, list) {
-    var li = el('li', 'cart-item card shadow-sm p-3 mb-3 border-0 bg-white rounded-3');
-    var row = el('div', 'row align-items-center g-3');
-
-    var colImg = el('div', 'col-auto');
-    var img = el('img', 'cart-item-img rounded');
-    img.src = item.img || './img/placeholder.png';
-    img.alt = item.name; img.width = 70; img.height = 70;
-    img.style.objectFit = 'cover';
-    colImg.appendChild(img);
-
-    var colName = el('div', 'col-12 col-sm');
-    colName.appendChild(el('p', 'cart-item-name fw-semibold fs-5 mb-0 text-dark', item.name));
-
-    var colPrice = el('div', 'col-6 col-sm-auto text-sm-end');
-    var priceP = el('p', 'cart-item-price fw-bold text-danger fs-5 mb-0', money(item.price * item.qty));
-    var unit = el('small', 'text-muted', money(item.price) + ' each');
-    colPrice.appendChild(priceP);
-    colPrice.appendChild(unit);
-
-    var colQty = el('div', 'col-6 col-sm-auto');
-    var input = el('input', 'cart-item-qty form-control form-control-sm text-center mx-auto');
-    input.type = 'number'; input.min = 1; input.max = 99; input.value = item.qty;
-    input.style.maxWidth = '80px';
-    input.setAttribute('aria-label', 'Quantity of ' + item.name);
-    input.addEventListener('change', function () {
-      var updated = setQty(item.id, parseInt(input.value, 10));
-      if (!updated) return;
-      input.value = updated.qty;
-      priceP.textContent = money(updated.price * updated.qty);
-      renderTotal();
-    });
-    colQty.appendChild(input);
-
-    var colDel = el('div', 'col-12 col-sm-auto');
-    var del = el('button', 'cart-item-remove btn btn-outline-danger btn-sm w-100', 'Remove');
-    del.type = 'button';
-    del.addEventListener('click', function () { removeItem(item.id); renderCart(list); });
-    colDel.appendChild(del);
-
-    [colImg, colName, colPrice, colQty, colDel].forEach(function (c) { row.appendChild(c); });
-    li.appendChild(row);
-    return li;
-  }
-
-  function renderCart(list) {
-    var cart = load();
-    list.textContent = '';
-    if (!cart.length) {
-      var li = el('li', 'text-center py-5');
-      li.appendChild(el('p', 'fs-4 text-muted', 'Your cart is empty'));
-      var go = el('a', 'btn btn-danger', 'Go to menu');
-      go.href = './menu.html';
-      li.appendChild(go);
-      list.appendChild(li);
-    } else {
-      cart.forEach(function (item) { list.appendChild(buildItem(item, list)); });
+    if (items.length === 0) {
+        listEl.innerHTML = '<li class="text-center py-4 text-muted fs-5">Your cart is empty.</li>';
+        if (subtotalEl) subtotalEl.textContent = '0 ₸';
+        if (finalTotalEl) finalTotalEl.textContent = '0 ₸';
+        if (bonusSection) bonusSection.innerHTML = '';
+        return;
     }
-    renderTotal();
-  }
-  document.addEventListener('DOMContentLoaded', function () {
-    updateBadge();
-    var list = document.querySelector('.cart-items');
-    if (list) renderCart(list);
-    else initMenu();
-  });
 
-  window.addEventListener('storage', function (e) {
-    if (e.key !== KEY) return;
-    updateBadge();
-    var list = document.querySelector('.cart-items');
-    if (list) renderCart(list);
-  });
-})();
+    let subtotal = 0;
+
+    items.forEach((item, index) => {
+        subtotal += item.price * item.count;
+        const li = document.createElement('li');
+        li.className = 'card shadow-sm p-3 mb-3 border-0 bg-white rounded-3 d-flex flex-row align-items-center justify-content-between gap-3';
+        li.innerHTML = `
+            <div class="d-flex align-items-center gap-3">
+                <img src="${item.img}" alt="${item.name}" class="rounded-2" width="60" height="60" style="object-fit: cover;">
+                <div>
+                    <h6 class="fw-bold mb-1 text-dark">${item.name}</h6>
+                    <span class="text-danger fw-semibold">${item.price.toLocaleString()} ₸</span>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-sm btn-outline-secondary px-2" onclick="changeCount(${index}, -1)">-</button>
+                <span class="fw-bold px-2">${item.count}</span>
+                <button class="btn btn-sm btn-outline-secondary px-2" onclick="changeCount(${index}, 1)">+</button>
+                <button class="btn btn-sm btn-outline-danger ms-2" onclick="removeItem(${index})">&times;</button>
+            </div>
+        `;
+        listEl.appendChild(li);
+    });
+
+    // Обработка бонусов (1 бонус = 1 ₸)
+    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : JSON.parse(localStorage.getItem('elite_sushi_current_user') || 'null');
+    let appliedBonus = getAppliedBonuses();
+
+    if (bonusSection) {
+        if (user) {
+            const userBonuses = user.bonuses || 0;
+            const maxUsable = Math.min(userBonuses, subtotal);
+
+            // Если сумма заказа уменьшилась ниже списанных бонусов — корректируем
+            if (appliedBonus > maxUsable) {
+                appliedBonus = maxUsable;
+                setAppliedBonuses(appliedBonus);
+            }
+
+            bonusSection.innerHTML = `
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
+                    <div>
+                        <span class="fw-bold text-dark">Loyalty Bonuses:</span>
+                        <span class="badge bg-warning text-dark fs-6 ms-1">${userBonuses} bonuses</span>
+                        <small class="text-muted d-block">(Rate 1:1 — 1 bonus = 1 ₸ discount)</small>
+                    </div>
+                </div>
+                <div class="input-group" style="max-width: 320px;">
+                    <input type="number" id="bonusInput" class="form-control" min="0" max="${maxUsable}" value="${appliedBonus}" placeholder="Amount">
+                    <button class="btn btn-outline-secondary" type="button" id="maxBonusBtn">Max</button>
+                    <button class="btn btn-danger" type="button" id="applyBonusBtn">Apply</button>
+                </div>
+            `;
+
+            document.getElementById('maxBonusBtn').addEventListener('click', () => {
+                document.getElementById('bonusInput').value = maxUsable;
+            });
+
+            document.getElementById('applyBonusBtn').addEventListener('click', () => {
+                let val = parseInt(document.getElementById('bonusInput').value || '0', 10);
+                if (val < 0) val = 0;
+                if (val > maxUsable) val = maxUsable;
+                setAppliedBonuses(val);
+                renderCart();
+            });
+
+        } else {
+            setAppliedBonuses(0);
+            bonusSection.innerHTML = `
+                <div class="alert alert-light border d-flex justify-content-between align-items-center mb-0 p-2">
+                    <span class="small text-secondary">Want to spend bonuses? <a href="./login.html" class="fw-bold text-danger text-decoration-none">Sign in</a></span>
+                </div>
+            `;
+        }
+    }
+
+    const finalTotal = Math.max(0, subtotal - appliedBonus);
+
+    if (subtotalEl) subtotalEl.textContent = `${subtotal.toLocaleString()} ₸`;
+    if (finalTotalEl) finalTotalEl.textContent = `${finalTotal.toLocaleString()} ₸`;
+
+    if (discountRow && discountEl) {
+        if (appliedBonus > 0) {
+            discountRow.classList.remove('d-none');
+            discountEl.textContent = `-${appliedBonus.toLocaleString()} ₸`;
+        } else {
+            discountRow.classList.add('d-none');
+        }
+    }
+}
+
+window.changeCount = function(index, delta) {
+    const items = getCartItems();
+    items[index].count += delta;
+    if (items[index].count <= 0) {
+        items.splice(index, 1);
+    }
+    saveCartItems(items);
+    renderCart();
+};
+
+window.removeItem = function(index) {
+    const items = getCartItems();
+    items.splice(index, 1);
+    saveCartItems(items);
+    renderCart();
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderCart();
+});

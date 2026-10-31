@@ -44,10 +44,23 @@
                 <ul class="cart-items list-unstyled mb-4"></ul>
 
                 <article class="cart-summary card shadow-sm p-4 border-0 bg-white rounded-3">
-                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
-                        <p class="fs-4 fw-bold mb-0 text-dark">Total: <span class="cart-total text-danger">0 ₸</span></p>
+                    <!-- Секция бонусов -->
+                    <div id="bonusSection" class="border-bottom pb-3 mb-3"></div>
+
+                    <!-- Разбивка цен -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary">Subtotal:</span>
+                        <span class="fw-semibold text-dark" id="cartSubtotal">0 ₸</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 d-none" id="discountRow">
+                        <span class="text-success fw-medium">Bonus Discount (1:1):</span>
+                        <span class="fw-bold text-success" id="cartDiscount">-0 ₸</span>
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 pt-2 border-top">
+                        <p class="fs-4 fw-bold mb-0 text-dark">Total: <span class="cart-total text-danger" id="cartFinalTotal">0 ₸</span></p>
                         <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-sm-auto justify-content-end">
-                            <a href="./order.html" class="cart-checkout btn btn-danger btn-lg shadow-sm">Checkout</a>
+                            <a href="./order.html" class="cart-checkout btn btn-danger btn-lg shadow-sm" id="checkoutBtn">Checkout</a>
                         </div>
                     </div>
                 </article>
@@ -84,6 +97,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="auth.js"></script>
 <script src="cart.js"></script>
 </body>
 </html>
