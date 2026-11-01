@@ -1,9 +1,6 @@
-// cart.js — Управление корзиной и бонусами 1:1
-
 const CART_STORAGE_KEY = 'elite_sushi_cart';
 const APPLIED_BONUS_KEY = 'elite_sushi_applied_bonuses';
 
-// Тестовый товар по умолчанию, если корзина пустая (Morimoto Set как в ТЗ)
 function getCartItems() {
     const stored = localStorage.getItem(CART_STORAGE_KEY);
     if (!stored) {
@@ -28,7 +25,6 @@ function setAppliedBonuses(val) {
     localStorage.setItem(APPLIED_BONUS_KEY, val.toString());
 }
 
-// Рендер корзины
 function renderCart() {
     const listEl = document.querySelector('.cart-items');
     const subtotalEl = document.getElementById('cartSubtotal');
@@ -74,7 +70,6 @@ function renderCart() {
         listEl.appendChild(li);
     });
 
-    // Обработка бонусов (1 бонус = 1 ₸)
     const user = typeof getCurrentUser === 'function' ? getCurrentUser() : JSON.parse(localStorage.getItem('elite_sushi_current_user') || 'null');
     let appliedBonus = getAppliedBonuses();
 
@@ -83,7 +78,6 @@ function renderCart() {
             const userBonuses = user.bonuses || 0;
             const maxUsable = Math.min(userBonuses, subtotal);
 
-            // Если сумма заказа уменьшилась ниже списанных бонусов — корректируем
             if (appliedBonus > maxUsable) {
                 appliedBonus = maxUsable;
                 setAppliedBonuses(appliedBonus);
