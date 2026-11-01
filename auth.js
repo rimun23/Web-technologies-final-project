@@ -1,8 +1,6 @@
-// auth.js — Единый скрипт авторизации, профиля и навигации
 const DB_KEY = 'elite_sushi_accounts';
 const SESSION_KEY = 'elite_sushi_current_user';
 
-// Загрузка начальных данных из accounts.json
 async function initAccounts() {
     if (!localStorage.getItem(DB_KEY)) {
         try {
@@ -39,7 +37,6 @@ function setCurrentUser(user) {
     }
 }
 
-// 1. Управление навигацией (без дублирования кнопок Profile)
 function renderNavbar() {
     const user = getCurrentUser();
     const navbars = document.querySelectorAll('.navbar-nav');
@@ -53,7 +50,6 @@ function renderNavbar() {
         const authLi = authLink ? authLink.closest('li') : null;
 
         if (user) {
-            // Пользователь вошел:
             if (profileLi) {
                 profileLi.style.display = '';
                 profileLink.textContent = `Profile`;
@@ -61,8 +57,6 @@ function renderNavbar() {
             if (authLi) {
                 authLi.style.display = 'none';
             }
-
-            // Добавляем кнопку Log out
             const logoutLi = document.createElement('li');
             logoutLi.className = 'nav-item logout-li';
             logoutLi.innerHTML = `<a class="nav-link text-danger fw-semibold" href="#" id="authLogoutBtn">Log out</a>`;
@@ -74,18 +68,16 @@ function renderNavbar() {
                 window.location.href = './index.html';
             });
         } else {
-            // Гость:
             if (profileLi) {
-                profileLi.style.display = 'none'; // СКРЫВАЕМ кнопку Profile
+                profileLi.style.display = 'none';
             }
             if (authLi) {
-                authLi.style.display = ''; // ПОКАЗЫВАЕМ Sign up/Sign in
+                authLi.style.display = '';
             }
         }
     });
 }
 
-// Вспомогательные функции валидации (Bootstrap UI)
 function setInvalid(input, errorElement, message) {
     input.classList.add('is-invalid');
     input.classList.remove('is-valid');
@@ -96,8 +88,6 @@ function setValid(input) {
     input.classList.remove('is-invalid');
     input.classList.add('is-valid');
 }
-
-// 2. Регистрация по всем требованиям
 function handleRegister() {
     const form = document.getElementById('registerForm');
     if (!form) return;
@@ -112,7 +102,6 @@ function handleRegister() {
     const passwordError = document.getElementById('passwordError');
     const confirmPasswordError = document.getElementById('confirmPasswordError');
 
-    // Очистка ошибок при вводе
     [usernameInput, emailInput, passwordInput, checkPasswordInput].forEach(inp => {
         if (!inp) return;
         inp.addEventListener('input', () => {
@@ -130,8 +119,6 @@ function handleRegister() {
 
         let isValid = true;
         const accounts = getAccounts();
-
-        // 1. Требование к Username (мин 3 символа, только буквы/цифры/подчеркивание)
         const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
         if (!username) {
             setInvalid(usernameInput, usernameError, 'Username is required.');
@@ -146,7 +133,6 @@ function handleRegister() {
             setValid(usernameInput);
         }
 
-        // 2. Требование к Email (корректный email формат)
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email) {
             setInvalid(emailInput, emailError, 'Email is required.');
@@ -161,7 +147,6 @@ function handleRegister() {
             setValid(emailInput);
         }
 
-        // 3. Требование к Password (мин. 6 символов, буквы и цифры)
         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
         if (!password) {
             setInvalid(passwordInput, passwordError, 'Password is required.');
@@ -173,7 +158,6 @@ function handleRegister() {
             setValid(passwordInput);
         }
 
-        // 4. Требование к Confirm Password (полное совпадение)
         if (!checkPassword) {
             setInvalid(checkPasswordInput, confirmPasswordError, 'Please confirm your password.');
             isValid = false;
@@ -186,7 +170,6 @@ function handleRegister() {
 
         if (!isValid) return;
 
-        // Создаем пользователя: телефон и адрес изначально пустые!
         const newUser = {
             username: username,
             email: email,
@@ -200,12 +183,10 @@ function handleRegister() {
         saveAccounts(accounts);
         setCurrentUser(newUser);
 
-        // Переход в профиль после успешной валидации
         window.location.href = './profile.html';
     });
 }
 
-// 3. Авторизация (Login)
 function handleLogin() {
     const form = document.getElementById('loginForm');
     if (!form) return;
@@ -232,7 +213,6 @@ function handleLogin() {
     });
 }
 
-// 4. Профиль: отображение и сохранение адреса/номера
 function handleProfile() {
     if (!window.location.pathname.endsWith('profile.html')) return;
 
@@ -257,7 +237,6 @@ function handleProfile() {
     if (phoneInput) phoneInput.value = user.phone || '';
     if (addressInput) addressInput.value = user.address || '';
 
-    // Кнопка "use bonuses" переносит пользователя в корзину для списания
     if (useBonusesBtn) {
         useBonusesBtn.addEventListener('click', () => {
             window.location.href = './cart.html';
@@ -291,7 +270,6 @@ function handleProfile() {
         });
     }
 }
-// Обработка оформления заказа и списания бонусов со счета навсегда
 document.addEventListener('DOMContentLoaded', () => {
     if (window.location.pathname.endsWith('order.html')) {
         const user = getCurrentUser();
@@ -303,7 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
 
                 if (user && applied > 0) {
-                    // Списываем бонусы со счета навсегда
                     user.bonuses = Math.max(0, (user.bonuses || 0) - applied);
                     setCurrentUser(user);
 
@@ -313,7 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         accounts[idx].bonuses = user.bonuses;
                         saveAccounts(accounts);
                     }
-                    // Очищаем списанные бонусы
                     localStorage.removeItem('elite_sushi_applied_bonuses');
                 }
 
