@@ -40,72 +40,101 @@
         <h1 class="h2 fw-bold text-center text-md-start mb-4">Customer Reviews</h1>
         <div class="row justify-content-center">
             <div class="col-12 col-lg-8">
-                <section class="review card shadow-sm p-4 border-0 mb-4 bg-white rounded-3">
-                    <div class="row align-items-center g-3 mb-2">
-                        <div class="col-auto">
-                            <div class="imgs">
-                                <img src="./img/handsome-young-man-portrait-studio-shot-grey-shirt-men-male-face-hair-model-adult-clean-style-black-png.png" alt="Vladimir N." width="60" height="60" class="rounded-circle border border-2 border-danger object-fit-cover">
-                            </div>
+                <section class="card shadow-sm p-4 border-0 mb-4 bg-white rounded-3">
+                    <h2 class="h5 fw-bold mb-3">Leave a Review</h2>
+                    <form id="reviewForm">
+                        <div class="mb-3">
+                            <label for="authorName" class="form-label text-secondary small">Your Name</label>
+                            <input type="text" class="form-control" id="authorName" placeholder="Pls name" required>
+                            <div id="authorHelp" class="form-text small"></div>
                         </div>
-                        <div class="col">
-                            <div class="d-flex align-items-center flex-wrap">
-                                <img class="star" src="./img/star1.png" alt="star">
-                                <img class="star" src="./img/star1.png" alt="star">
-                                <img class="star" src="./img/star1.png" alt="star">
-                                <img class="star" src="./img/star1.png" alt="star">
-                                <img class="star" src="./img/star1.png" alt="star">
-                            </div>
+                        <div class="mb-3">
+                            <label for="ratingSelect" class="form-label text-secondary small">Rating</label>
+                            <select class="form-select" id="ratingSelect">
+                                <option value="5" selected>★★★★★(5/5)</option>
+                                <option value="4">★★★★☆(4/5)</option>
+                                <option value="3">★★★☆☆(3/5)</option>
+                                <option value="2">★★☆☆☆(2/5)</option>
+                                <option value="1">★☆☆☆☆(1/5)</option>
+                            </select>
                         </div>
-                    </div>
-                    <article>
-                        <h1 class="h5 fw-bold text-dark mb-2">Vladimir N.</h1>
-                        <p class="text-secondary mb-0">Tasty and filling, with a good amount of sauce; the fries were well-salted and the portion size was excellent. It was a bit heavy on the pepper—quite spicy—though likely perfect for fans of very hot food. The order arrived quickly and was still piping hot.</p>
-                    </article>
+                        <div class="mb-3">
+                            <label for="reviewText" class="form-label text-secondary small">Your Review</label>
+                            <textarea class="form-control" id="reviewText" rows="3" placeholder="Share your experience..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-danger px-4">Submit Review</button>
+                    </form>
                 </section>
-                <section class="review card shadow-sm p-4 border-0 mb-4 bg-white rounded-3">
-                    <div class="row align-items-center g-3 mb-2">
-                        <div class="col-auto">
-                            <div class="imgs">
-                                <img src="./img/images (4).jpg" alt="Alikhan P." width="60" height="60" class="rounded-circle border border-2 border-danger object-fit-cover">
+                <div id="reviewsContainer">
+                    <section class="review card shadow-sm p-4 border-0 mb-4 bg-white rounded-3">
+                        <div class="row align-items-center g-3 mb-2">
+                            <div class="col-auto">
+                                <div class="imgs">
+                                    <img src="./img/handsome-young-man-portrait-studio-shot-grey-shirt-men-male-face-hair-model-adult-clean-style-black-png.png" alt="Vladimir N." width="60" height="60" class="rounded-circle border border-2 border-danger object-fit-cover">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="d-flex align-items-center flex-wrap">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                </div>
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="d-flex align-items-center flex-wrap">
-                                <img class="star" src="./img/star1.png" alt="star">
-                                <img class="star" src="./img/star1.png" alt="star">
-                                <img class="star" src="./img/star1.png" alt="star">
-                                <img class="star" src="./img/star1.png" alt="star">
-                                <img class="star" src="./img/star1.png" alt="star">
+                        <article>
+                            <h1 class="h5 fw-bold text-dark mb-2">Vladimir N.</h1>
+                            <p class="text-secondary mb-0">Tasty and filling, with a good amount of sauce; the fries were well-salted and the portion size was excellent. It was a bit heavy on the pepper—quite spicy—though likely perfect for fans of very hot food. The order arrived quickly and was still piping hot.</p>
+                        </article>
+                    </section>
+                    <section class="review card shadow-sm p-4 border-0 mb-4 bg-white rounded-3">
+                        <div class="row align-items-center g-3 mb-2">
+                            <div class="col-auto">
+                                <div class="imgs">
+                                    <img src="./img/images (4).jpg" alt="Alikhan P." width="60" height="60" class="rounded-circle border border-2 border-danger object-fit-cover">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="d-flex align-items-center flex-wrap">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <article>
-                        <h1 class="h5 fw-bold text-dark mb-2">Alikhan P.</h1>
-                        <p class="text-secondary mb-0">It’s fantastic - they reply to messages instantly, orders are ready really fast, and the burgers are delicious and juicy - exactly what you want. The fries with the signature sauce are amazing. The Spicy Crispy Burger is a real "wow" and a must-try. The Seoul Burger is packed with sauce - it even overflowed a bit for me—but it’s great. The Teriyaki Burger wasn't quite my thing; it’s a matter of personal taste. The location is convenient, and the interior is spacious with plenty of tables. The staff are lovely - always calm and friendly, with no long waits—and the music is great, too.</p>
-                    </article>
-                </section>
-                <section class="review card shadow-sm p-4 border-0 mb-4 bg-white rounded-3">
-                    <div class="row align-items-center g-3 mb-2">
-                        <div class="col-auto">
-                            <div class="imgs">
-                                <img src="./img/new_girl.jpg" alt="Amina R." width="60" height="60" class="rounded-circle border border-2 border-danger object-fit-cover">
+                        <article>
+                            <h1 class="h5 fw-bold text-dark mb-2">Alikhan P.</h1>
+                            <p class="text-secondary mb-0">It’s fantastic - they reply to messages instantly, orders are ready really fast, and the burgers are delicious and juicy - exactly what you want. The fries with the signature sauce are amazing. The Spicy Crispy Burger is a real "wow" and a must-try. The Seoul Burger is packed with sauce - it even overflowed a bit for me—but it’s great. The Teriyaki Burger wasn't quite my thing; it’s a matter of personal taste. The location is convenient, and the interior is spacious with plenty of tables. The staff are lovely - always calm and friendly, with no long waits—and the music is great, too.</p>
+                        </article>
+                    </section>
+
+                    <section class="review card shadow-sm p-4 border-0 mb-4 bg-white rounded-3">
+                        <div class="row align-items-center g-3 mb-2">
+                            <div class="col-auto">
+                                <div class="imgs">
+                                    <img src="./img/new_girl.jpg" alt="Amina R." width="60" height="60" class="rounded-circle border border-2 border-danger object-fit-cover">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="d-flex align-items-center flex-wrap">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                    <img class="star" src="./img/star1.png" alt="star">
+                                </div>
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="d-flex align-items-center flex-wrap">
-                                <img class="star" src="./img/star1.png" alt="star">
-                                <img class="star" src="./img/star1.png" alt="star">
-                                <img class="star" src="./img/star1.png" alt="star">
-                                <img class="star" src="./img/star1.png" alt="star">
-                                <img class="star" src="./img/star1.png" alt="star">
-                            </div>
-                        </div>
-                    </div>
-                    <article>
-                        <h1 class="h5 fw-bold text-dark mb-2">Amina R.</h1>
-                        <p class="text-secondary mb-0">A really lovely place! 🥢 I’d like to give a special mention to the service—the staff are polite, attentive, and genuinely care about their guests. Everything is handled quickly, neatly, and with a smile, yet without being intrusive. They take orders carefully, explain everything, and help with choices. The atmosphere is cozy, the food is delicious, and the excellent service makes you want to come back again. Highly recommended! 🔥</p>
-                    </article>
-                </section>
+                        <article>
+                            <h1 class="h5 fw-bold text-dark mb-2">Amina R.</h1>
+                            <p class="text-secondary mb-0">A really lovely place! 🥢 I’d like to give a special mention to the service—the staff are polite, attentive, and genuinely care about their guests. Everything is handled quickly, neatly, and with a smile, yet without being intrusive. They take orders carefully, explain everything, and help with choices. The atmosphere is cozy, the food is delicious, and the excellent service makes you want to come back again. Highly recommended! 🔥</p>
+                        </article>
+                    </section>
+                </div>
+
             </div>
         </div>
     </div>
@@ -136,7 +165,9 @@
         </div>
     </div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="cart.js"></script>
 <script src="auth.js"></script>
+<script src="review.js"></script>
 </body>
 </html>
