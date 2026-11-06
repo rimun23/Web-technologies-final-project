@@ -1,308 +1,209 @@
 const DB_KEY = 'elite_sushi_accounts';
 const SESSION_KEY = 'elite_sushi_current_user';
-
-async function initAccounts() {
-    if (!localStorage.getItem(DB_KEY)) {
-        try {
-            const res = await fetch('./accounts.json');
-            if (res.ok) {
-                const data = await res.json();
-                localStorage.setItem(DB_KEY, JSON.stringify(data));
-            } else {
-                localStorage.setItem(DB_KEY, JSON.stringify([]));
-            }
-        } catch (e) {
-            localStorage.setItem(DB_KEY, JSON.stringify([]));
-        }
-    }
+const PHONE_CHARS = /^\+?[\d\s()\-]+$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function initAccounts() {
+    if (localStorage.getItem(DB_KEY)) return $.Deferred().resolve().promise();
+    return $.getJSON('./accounts.json')
+        .done(function (data) { localStorage.setItem(DB_KEY, JSON.stringify(data)); })
+        .fail(function () { localStorage.setItem(DB_KEY, JSON.stringify([])); });
 }
-
-function getAccounts() {
-    return JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-}
-
-function saveAccounts(accounts) {
-    localStorage.setItem(DB_KEY, JSON.stringify(accounts));
-}
-
-function getCurrentUser() {
-    return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
-}
-
+function getAccounts() { return JSON.parse(localStorage.getItem(DB_KEY) || '[]'); }
+function saveAccounts(accounts) { localStorage.setItem(DB_KEY, JSON.stringify(accounts)); }
+function getCurrentUser() { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }
 function setCurrentUser(user) {
-    if (user) {
-        localStorage.setItem(SESSION_KEY, JSON.stringify(user));
-    } else {
-        localStorage.removeItem(SESSION_KEY);
-    }
+    if (user) localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+    else localStorage.removeItem(SESSION_KEY);
 }
-
+function feedbackFor($input) {
+    let $fb = $input.siblings('.invalid-feedback');
+    if (!$fb.length) $fb = $('<div class="invalid-feedback"></div>').insertAfter($input);
+    return $fb;
+}
+function setInvalid($input, message) {
+    $input.addClass('is-invalid').removeClass('is-valid');
+    feedbackFor($input).text(message);
+}
+function setValid($input) {
+    $input.removeClass('is-invalid').addClass('is-valid');
+}
+function isValidPhone(value) {
+    const digits = value.replace(/\D/g, '');
+    return PHONE_CHARS.test(value) && digits.length >= 10 && digits.length <= 15;
+}
+function showSuccess($beforeEl, message, done) {
+    $('<div class="alert alert-success" role="alert"></div>')
+        .text(message)
+        .hide()
+        .insertBefore($beforeEl)
+        .fadeIn(300)
+        .delay(1200)
+        .fadeOut(300, function () {
+            $(this).remove();
+            if (done) done();
+        });
+}
+function clearErrorsOnInput($form) {
+    $form.on('input change', '.form-control', function () {
+        $(this).removeClass('is-invalid is-valid');
+    });
+}
 function renderNavbar() {
     const user = getCurrentUser();
-    const navbars = document.querySelectorAll('.navbar-nav');
-
-    navbars.forEach(nav => {
-        nav.querySelectorAll('.logout-li').forEach(li => li.remove());
-
-        const profileLink = nav.querySelector('a[href*="profile.html"]');
-        const authLink = nav.querySelector('a[href*="register.html"], a[href*="login.html"]');
-        const profileLi = profileLink ? profileLink.closest('li') : null;
-        const authLi = authLink ? authLink.closest('li') : null;
-
+    $('.navbar-nav').each(function () {
+        const $nav = $(this);
+        $nav.find('.logout-li').remove();
+        const $profileLi = $nav.find('a[href*="profile.html"]').closest('li');
+        const $authLi = $nav.find('a[href*="register.html"], a[href*="login.html"]').closest('li');
         if (user) {
-            if (profileLi) {
-                profileLi.style.display = '';
-                profileLink.textContent = `Profile`;
-            }
-            if (authLi) {
-                authLi.style.display = 'none';
-            }
-            const logoutLi = document.createElement('li');
-            logoutLi.className = 'nav-item logout-li';
-            logoutLi.innerHTML = `<a class="nav-link text-danger fw-semibold" href="#" id="authLogoutBtn">Log out</a>`;
-            nav.appendChild(logoutLi);
-
-            logoutLi.querySelector('#authLogoutBtn').addEventListener('click', (e) => {
-                e.preventDefault();
-                setCurrentUser(null);
-                window.location.href = './index.html';
-            });
+            $profileLi.show();
+            $authLi.hide();
+            $('<li class="nav-item logout-li"><a class="nav-link text-danger fw-semibold" href="#" id="authLogoutBtn">Log out</a></li>')
+                .appendTo($nav);
         } else {
-            if (profileLi) {
-                profileLi.style.display = 'none';
-            }
-            if (authLi) {
-                authLi.style.display = '';
-            }
+            $profileLi.hide();
+            $authLi.show();
         }
     });
-}
-
-function setInvalid(input, errorElement, message) {
-    input.classList.add('is-invalid');
-    input.classList.remove('is-valid');
-    if (errorElement) errorElement.textContent = message;
-}
-
-function setValid(input) {
-    input.classList.remove('is-invalid');
-    input.classList.add('is-valid');
 }
 function handleRegister() {
-    const form = document.getElementById('registerForm');
-    if (!form) return;
+    const $form = $('#registerForm');
+    if (!$form.length) return;
+    clearErrorsOnInput($form);
 
-    const usernameInput = document.getElementById('username');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const checkPasswordInput = document.getElementById('check_password');
-
-    const usernameError = document.getElementById('usernameError');
-    const emailError = document.getElementById('emailError');
-    const passwordError = document.getElementById('passwordError');
-    const confirmPasswordError = document.getElementById('confirmPasswordError');
-
-    [usernameInput, emailInput, passwordInput, checkPasswordInput].forEach(inp => {
-        if (!inp) return;
-        inp.addEventListener('input', () => {
-            inp.classList.remove('is-invalid');
-        });
-    });
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const username = usernameInput.value.trim();
-        const email = emailInput.value.trim().toLowerCase();
-        const password = passwordInput.value;
-        const checkPassword = checkPasswordInput.value;
-
-        let isValid = true;
+    $form.on('submit', function (event) {
+        event.preventDefault();
+        const $username = $('#username'), $email = $('#email');
+        const $password = $('#password'), $confirm = $('#check_password');
+        const username = $username.val().trim();
+        const email = $email.val().trim().toLowerCase();
+        const password = $password.val();
+        const confirm = $confirm.val();
         const accounts = getAccounts();
-        const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-        if (!username) {
-            setInvalid(usernameInput, usernameError, 'Username is required.');
-            isValid = false;
-        } else if (!usernameRegex.test(username)) {
-            setInvalid(usernameInput, usernameError, 'Username must be 3-20 characters (letters, numbers, underscores).');
-            isValid = false;
-        } else if (accounts.some(acc => acc.username.toLowerCase() === username.toLowerCase())) {
-            setInvalid(usernameInput, usernameError, 'This username is already taken.');
-            isValid = false;
-        } else {
-            setValid(usernameInput);
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!email) {
-            setInvalid(emailInput, emailError, 'Email is required.');
-            isValid = false;
-        } else if (!emailRegex.test(email)) {
-            setInvalid(emailInput, emailError, 'Please enter a valid email address (e.g. user@domain.com).');
-            isValid = false;
-        } else if (accounts.some(acc => acc.email.toLowerCase() === email)) {
-            setInvalid(emailInput, emailError, 'An account with this email already exists.');
-            isValid = false;
-        } else {
-            setValid(emailInput);
-        }
-
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
-        if (!password) {
-            setInvalid(passwordInput, passwordError, 'Password is required.');
-            isValid = false;
-        } else if (!passwordRegex.test(password)) {
-            setInvalid(passwordInput, passwordError, 'Password must be at least 6 characters and include both letters and numbers.');
-            isValid = false;
-        } else {
-            setValid(passwordInput);
-        }
-
-        if (!checkPassword) {
-            setInvalid(checkPasswordInput, confirmPasswordError, 'Please confirm your password.');
-            isValid = false;
-        } else if (password !== checkPassword) {
-            setInvalid(checkPasswordInput, confirmPasswordError, 'Passwords do not match.');
-            isValid = false;
-        } else {
-            setValid(checkPasswordInput);
-        }
-
+        let isValid = true;
+        if (!username) { setInvalid($username, 'Username is required.'); isValid = false; }
+        else if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) { setInvalid($username, 'Username must be 3-20 characters (letters, numbers, underscores).'); isValid = false; }
+        else if (accounts.some(acc => acc.username.toLowerCase() === username.toLowerCase())) { setInvalid($username, 'This username is already taken.'); isValid = false; }
+        else setValid($username);
+        if (!email) { setInvalid($email, 'Email is required.'); isValid = false; }
+        else if (!EMAIL_REGEX.test(email)) { setInvalid($email, 'Please enter a valid email address (e.g. user@domain.com).'); isValid = false; }
+        else if (accounts.some(acc => acc.email.toLowerCase() === email)) { setInvalid($email, 'An account with this email already exists.'); isValid = false; }
+        else setValid($email);
+        if (!password) { setInvalid($password, 'Password is required.'); isValid = false; }
+        else if (!/^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(password)) { setInvalid($password, 'Password must be at least 6 characters and include both letters and numbers.'); isValid = false; }
+        else setValid($password);
+        if (!confirm) { setInvalid($confirm, 'Please confirm your password.'); isValid = false; }
+        else if (password !== confirm) { setInvalid($confirm, 'Passwords do not match.'); isValid = false; }
+        else setValid($confirm);
         if (!isValid) return;
-
-        const newUser = {
-            username: username,
-            email: email,
-            password: password,
-            phone: '',
-            address: '',
-            bonuses: 1500
-        };
-
+        const newUser = { username, email, password, phone: '', address: '', bonuses: 1500 };
         accounts.push(newUser);
         saveAccounts(accounts);
         setCurrentUser(newUser);
-
-        window.location.href = './profile.html';
+        showSuccess($form, 'Account created! Taking you to your profile...', function () {
+            window.location.href = './profile.html';
+        });
+        $form.trigger('reset');
+        $form.find('.form-control').removeClass('is-valid is-invalid');
     });
 }
-
 function handleLogin() {
-    const form = document.getElementById('loginForm');
-    if (!form) return;
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const identifier = document.getElementById('username').value.trim().toLowerCase();
-        const password = document.getElementById('password').value;
-
-        const accounts = getAccounts();
-        const user = accounts.find(acc => 
-            (acc.username.toLowerCase() === identifier || acc.email.toLowerCase() === identifier) && 
-            acc.password === password
-        );
-
+    const $form = $('#loginForm');
+    if (!$form.length) return;
+    clearErrorsOnInput($form);
+    $form.on('submit', function (event) {
+        event.preventDefault();
+        const $id = $('#username'), $pass = $('#password');
+        const identifier = $id.val().trim().toLowerCase();
+        const password = $pass.val();
+        const user = getAccounts().find(acc =>
+            (acc.username.toLowerCase() === identifier || acc.email.toLowerCase() === identifier) && acc.password === password);
         if (!user) {
-            alert('Invalid username/email or password!');
+            setInvalid($pass, 'Invalid username/email or password!');
             return;
         }
-
         setCurrentUser(user);
         window.location.href = './profile.html';
     });
 }
-
 function handleProfile() {
-    if (!window.location.pathname.endsWith('profile.html')) return;
-
+    const $form = $('#profileForm');
+    if (!$form.length) return;
     const user = getCurrentUser();
-    if (!user) {
-        window.location.href = './login.html';
-        return;
-    }
-
-    const usernameDisplay = document.getElementById('profileUsername');
-    const emailDisplay = document.getElementById('profileEmail');
-    const phoneInput = document.getElementById('profilePhone');
-    const addressInput = document.getElementById('profileAddress');
-    const bonusesDisplay = document.getElementById('profileBonuses');
-    const form = document.getElementById('profileForm');
-    const saveAlert = document.getElementById('saveAlert');
-    const useBonusesBtn = document.getElementById('useBonusesBtn');
-
-    if (usernameDisplay) usernameDisplay.textContent = user.username;
-    if (emailDisplay) emailDisplay.textContent = user.email || 'No email';
-    if (bonusesDisplay) bonusesDisplay.textContent = user.bonuses !== undefined ? user.bonuses : 0;
-    if (phoneInput) phoneInput.value = user.phone || '';
-    if (addressInput) addressInput.value = user.address || '';
-
-    if (useBonusesBtn) {
-        useBonusesBtn.addEventListener('click', () => {
-            window.location.href = './cart.html';
-        });
-    }
-
-    if (form) {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const updatedPhone = phoneInput.value.trim();
-            const updatedAddress = addressInput.value.trim();
-
-            user.phone = updatedPhone;
-            user.address = updatedAddress;
-
-            setCurrentUser(user);
-
-            const accounts = getAccounts();
-            const idx = accounts.findIndex(acc => acc.username.toLowerCase() === user.username.toLowerCase());
-            if (idx !== -1) {
-                accounts[idx].phone = updatedPhone;
-                accounts[idx].address = updatedAddress;
-                saveAccounts(accounts);
-            }
-
-            if (saveAlert) {
-                saveAlert.classList.remove('d-none');
-                setTimeout(() => saveAlert.classList.add('d-none'), 3000);
-            }
-        });
-    }
+    if (!user) { window.location.href = './login.html'; return; }
+    const $phone = $('#profilePhone'), $address = $('#profileAddress');
+    $('#profileUsername').text(user.username);
+    $('#profileEmail').text(user.email || 'No email');
+    $('#profileBonuses').text(user.bonuses !== undefined ? user.bonuses : 0);
+    $phone.val(user.phone || '');
+    $address.val(user.address || '');
+    $('#useBonusesBtn').on('click', function () { window.location.href = './cart.html'; });
+    clearErrorsOnInput($form);
+    $form.on('submit', function (event) {
+        event.preventDefault();
+        const phone = $phone.val().trim();
+        const address = $address.val().trim();
+        if (phone && !isValidPhone(phone)) {
+            setInvalid($phone, 'Enter a valid phone number, e.g. +7 777 123 45 67.');
+            return;
+        }
+        setValid($phone);
+        user.phone = phone;
+        user.address = address;
+        setCurrentUser(user);
+        const accounts = getAccounts();
+        const idx = accounts.findIndex(acc => acc.username.toLowerCase() === user.username.toLowerCase());
+        if (idx !== -1) { accounts[idx].phone = phone; accounts[idx].address = address; saveAccounts(accounts); }
+        $('#saveAlert').removeClass('d-none').hide().fadeIn(300).delay(3000).fadeOut(400);
+    });
 }
-document.addEventListener('DOMContentLoaded', () => {
-    if (window.location.pathname.endsWith('order.html')) {
+function handleOrder() {
+    const $form = $('form:first');
+    if (!$form.length || !/order\.html$/.test(window.location.pathname)) return;
+    clearErrorsOnInput($form);
+    $form.on('change', 'input[type="radio"][name="address"]', function () {
+        const text = $(this).next('label').text();
+        $form.find('input[type="text"][name="address"]').val(text).removeClass('is-invalid');
+    });
+    $form.find('input[type="radio"][name="address"]:checked').trigger('change');
+    $form.on('submit', function (event) {
+        event.preventDefault();
+        const $name = $('#name'), $phone = $('#phone');
+        const name = $name.val().trim(), phone = $phone.val().trim();
+        let isValid = true;
+        if (name.length < 2) { setInvalid($name, 'Please enter your name (at least 2 characters).'); isValid = false; } else setValid($name);
+        if (!phone) { setInvalid($phone, 'Phone is required.'); isValid = false; }
+        else if (!isValidPhone(phone)) { setInvalid($phone, 'Enter a valid phone number, e.g. +7 777 123 45 67.'); isValid = false; }
+        else setValid($phone);
+        if (!isValid) return;
         const user = getCurrentUser();
         const applied = parseInt(localStorage.getItem('elite_sushi_applied_bonuses') || '0', 10);
-        const orderForm = document.querySelector('form');
-
-        if (orderForm) {
-            orderForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-
-                if (user && applied > 0) {
-                    user.bonuses = Math.max(0, (user.bonuses || 0) - applied);
-                    setCurrentUser(user);
-
-                    const accounts = getAccounts();
-                    const idx = accounts.findIndex(acc => acc.username.toLowerCase() === user.username.toLowerCase());
-                    if (idx !== -1) {
-                        accounts[idx].bonuses = user.bonuses;
-                        saveAccounts(accounts);
-                    }
-                    localStorage.removeItem('elite_sushi_applied_bonuses');
-                }
-
-                alert('Payment successful! Your order has been placed.');
-                window.location.href = './index.html';
-            });
+        if (user && applied > 0) {
+            user.bonuses = Math.max(0, (user.bonuses || 0) - applied);
+            setCurrentUser(user);
+            const accounts = getAccounts();
+            const idx = accounts.findIndex(acc => acc.username.toLowerCase() === user.username.toLowerCase());
+            if (idx !== -1) { accounts[idx].bonuses = user.bonuses; saveAccounts(accounts); }
+            localStorage.removeItem('elite_sushi_applied_bonuses');
         }
-    }
-});
-document.addEventListener('DOMContentLoaded', async () => {
-    await initAccounts();
-    renderNavbar();
-    handleRegister();
-    handleLogin();
-    handleProfile();
+        showSuccess($form, 'Payment successful! Your order has been placed.', function () {
+            window.location.href = './index.html';
+        });
+        $form.trigger('reset');
+        $form.find('.form-control').removeClass('is-valid is-invalid');
+    });
+}
+$(function () {
+    $(document).on('click', '#authLogoutBtn', function (event) {
+        event.preventDefault();
+        setCurrentUser(null);
+        window.location.href = './index.html';
+    });
+    initAccounts().always(function () {
+        renderNavbar();
+        handleRegister();
+        handleLogin();
+        handleProfile();
+        handleOrder();
+    });
 });
