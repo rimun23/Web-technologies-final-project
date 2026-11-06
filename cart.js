@@ -2,11 +2,6 @@ const CART_STORAGE_KEY = 'elite_sushi_cart';
 const APPLIED_BONUS_KEY = 'elite_sushi_applied_bonuses';
 function getCartItems() {
     const stored = localStorage.getItem(CART_STORAGE_KEY);
-    if (!stored) {
-        const defaultCart = [{ id: 1, name: '"Morimoto" Set', price: 6250, count: 1, img: './img/Set Morimoto.jpg' }];
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(defaultCart));
-        return defaultCart;
-    }
     return JSON.parse(stored);
 }
 function saveCartItems(items) { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items)); }
