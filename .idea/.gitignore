@@ -8,3 +8,36 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+
+
+ const $charCounter = $(`
+    <div class="d-flex justify-content-between mt-1">
+        <small class="counter-text text-muted">Символов: <span class="char-num">0</span> (мин. 5)</small>
+    </div>
+`);
+    $('#reviewText').after($charCounter);
+    $('#reviewText').on('input', function () {
+        const len = $(this).val().trim().length;
+        const $num = $charCounter.find('.char-num');
+
+        $num.text(len);
+
+        if (len >= 5) {
+            $charCounter.find('.counter-text')
+                .removeClass('text-danger text-muted')
+                .addClass('text-success');
+        } else {
+            $charCounter.find('.counter-text')
+                .removeClass('text-success text-muted')
+                .addClass('text-danger');
+        }
+    });
+
+
+
+
+
+          const charCount = (review.text || '').length;
+            $('<small class="text-muted d-block mt-2" style="font-size: 0.8rem;">Длина отзыва: <span class="char-num">' + charCount + '</span></small>')
+            .appendTo($card.find('article'))
