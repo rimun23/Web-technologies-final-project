@@ -593,15 +593,26 @@ function handleOrder() {
 
         const user = getCurrentUser();
         const applied = parseInt(localStorage.getItem(APPLIED_BONUSES_KEY) || '0', 10);
-        if (user && applied > 0) {
-            user.bonuses = Math.max(0, (user.bonuses || 0) - applied);
+        let earned = 0;
+        if (user) {
+            // order total from the cart, minus the bonuses spent
+            let cartItems = [];
+            try { cartItems = JSON.parse(localStorage.getItem(CART_KEY) || '[]') || []; } catch (e) { cartItems = []; }
+            const subtotal = cartItems.reduce(function (sum, it) {
+                return sum + (parseInt(it.price, 10) || 0) * (parseInt(it.count, 10) || 0);
+            }, 0);
+            const spent = Math.min(applied, subtotal, user.bonuses || 0);
+            const paid = Math.max(0, subtotal - spent);
+            earned = Math.floor(paid * 0.05); // 5% of the paid amount
+            user.bonuses = Math.max(0, (user.bonuses || 0) - spent) + earned;
             setCurrentUser(user);
             const accounts = getAccounts();
             const idx = accounts.findIndex(acc => acc.username.toLowerCase() === user.username.toLowerCase());
             if (idx !== -1) { accounts[idx].bonuses = user.bonuses; saveAccounts(accounts); }
-            localStorage.removeItem(APPLIED_BONUSES_KEY);
         }
-        showSuccess($form, 'Payment successful! Your order has been placed.', function () {
+        localStorage.removeItem(APPLIED_BONUSES_KEY);
+        clearCart();
+        showSuccess($form, 'Payment successful! Your order has been placed.' + (earned > 0 ? ' +' + earned + ' bonuses (5% cashback) added to your account.' : ''), function () {
             window.location.href = './index.html';
         });
         $form.trigger('reset');
