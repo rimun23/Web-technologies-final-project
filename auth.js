@@ -1,7 +1,63 @@
 const DB_KEY = 'elite_sushi_accounts';
 const SESSION_KEY = 'elite_sushi_current_user';
+const CART_KEY = 'elite_sushi_cart';
+const APPLIED_BONUSES_KEY = 'elite_sushi_applied_bonuses';
 const PHONE_CHARS = /^\+?[\d\s()\-]+$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const UPPERCASE_REGEX = /[A-Z]/;
+const LOWERCASE_REGEX = /[a-z]/;
+const DIGIT_REGEX = /\d/;
+const SPECIAL_CHAR_REGEX = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/;
+
+const PASSWORD_RULES = [
+    { key: 'length', selector: '#req-length', label: 'At least 8 characters' },
+    { key: 'upper', selector: '#req-upper', label: 'At least 1 uppercase letter (A-Z)' },
+    { key: 'lower', selector: '#req-lower', label: 'At least 1 lowercase letter (a-z)' },
+    { key: 'digit', selector: '#req-digit', label: 'At least 1 number (0-9)' },
+    { key: 'special', selector: '#req-special', label: 'At least 1 special character (!, %, :, *, etc.)' }
+];
+
+function getPasswordChecks(password) {
+    return {
+        length: password.length >= 8,
+        upper: UPPERCASE_REGEX.test(password),
+        lower: LOWERCASE_REGEX.test(password),
+        digit: DIGIT_REGEX.test(password),
+        special: SPECIAL_CHAR_REGEX.test(password)
+    };
+}
+
+function isPasswordValid(password) {
+    const checks = getPasswordChecks(password);
+    return checks.length && checks.upper && checks.lower && checks.digit && checks.special;
+}
+
+function updatePasswordChecklist(password, forceError = false) {
+    const checks = getPasswordChecks(password);
+    const isEmpty = password.length === 0 && !forceError;
+
+    PASSWORD_RULES.forEach(function (rule) {
+        const $item = $(rule.selector);
+        if (!$item.length) return;
+        const passed = checks[rule.key];
+
+        $item.removeClass('text-secondary text-success text-danger fw-semibold');
+        if (isEmpty) {
+            $item.addClass('text-secondary').text('✗ ' + rule.label);
+        } else if (passed) {
+            $item.addClass('text-success fw-semibold').text('✓ ' + rule.label);
+        } else {
+            $item.addClass('text-danger').text('✗ ' + rule.label);
+        }
+    });
+}
+
+function clearCart() {
+    localStorage.setItem(CART_KEY, JSON.stringify([]));
+    localStorage.removeItem(APPLIED_BONUSES_KEY);
+}
+
 function initAccounts() {
     if (localStorage.getItem(DB_KEY)) return $.Deferred().resolve().promise();
     return $.getJSON('./accounts.json')
@@ -28,8 +84,98 @@ function setValid($input) {
     $input.removeClass('is-invalid').addClass('is-valid');
 }
 function isValidPhone(value) {
+    const trimmed = value.trim();
+    if (!PHONE_CHARS.test(trimmed)) return false;
+    const digits = trimmed.replace(/\D/g, '');
+    if (trimmed.startsWith('+7') || trimmed.startsWith('7') || trimmed.startsWith('8')) {
+        return digits.length === 11;
+    }
+    return digits.length >= 10 && digits.length <= 15;
+}
+function formatPhoneInput(value) {
+    const trimmed = value.trim();
+    const digitsOnly = value.replace(/\D/g, '');
+    if (!digitsOnly) return trimmed === '+' ? '+' : '';
+
+    // Международный номер не на +7 / 8 оставляем без жёсткой маски
+    if (trimmed.startsWith('+') && !trimmed.startsWith('+7')) {
+        return '+' + digitsOnly.slice(0, 15);
+    }
+
+    let digits = digitsOnly;
+    if (digits.startsWith('8')) {
+        digits = '7' + digits.slice(1);
+    } else if (!digits.startsWith('7')) {
+        digits = '7' + digits;
+    }
+    digits = digits.slice(0, 11);
+
+    let formatted = '+7';
+    if (digits.length > 1) formatted += ' (' + digits.slice(1, 4);
+    if (digits.length > 4) formatted += ') ' + digits.slice(4, 7);
+    if (digits.length > 7) formatted += '-' + digits.slice(7, 9);
+    if (digits.length > 9) formatted += '-' + digits.slice(9, 11);
+    return formatted;
+}
+function formatCardNumber(value) {
+    const digits = value.replace(/\D/g, '').slice(0, 16);
+    return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+}
+function formatExpiryDate(value) {
+    const digits = value.replace(/\D/g, '').slice(0, 4);
+    if (digits.length >= 3) {
+        return digits.slice(0, 2) + '/' + digits.slice(2);
+    }
+    return digits;
+}
+function isValidLuhn(digits) {
+    let sum = 0;
+    let shouldDouble = false;
+    for (let i = digits.length - 1; i >= 0; i--) {
+        let digit = parseInt(digits.charAt(i), 10);
+        if (shouldDouble) {
+            digit *= 2;
+            if (digit > 9) digit -= 9;
+        }
+        sum += digit;
+        shouldDouble = !shouldDouble;
+    }
+    return sum % 10 === 0;
+}
+function validateCardNumber(value) {
     const digits = value.replace(/\D/g, '');
-    return PHONE_CHARS.test(value) && digits.length >= 10 && digits.length <= 15;
+    if (!digits) return { valid: false, message: 'Card number is required.' };
+    if (digits.length !== 16) return { valid: false, message: 'Card number must contain 16 digits.' };
+    if (/^0+$/.test(digits) || !isValidLuhn(digits)) {
+        return { valid: false, message: 'Invalid card number (check the digits).' };
+    }
+    return { valid: true };
+}
+function validateExpiry(value) {
+    const trimmed = value.trim();
+    if (!trimmed) return { valid: false, message: 'Expiry date is required.' };
+    const match = /^(0[1-9]|1[0-2])\/(\d{2})$/.exec(trimmed);
+    if (!match) return { valid: false, message: 'Use MM/YY format (e.g. 12/28).' };
+
+    const expMonth = parseInt(match[1], 10);
+    const expYear = 2000 + parseInt(match[2], 10);
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+
+    if (expYear < currentYear || (expYear === currentYear && expMonth < currentMonth)) {
+        return { valid: false, message: 'This card has expired.' };
+    }
+    if (expYear > currentYear + 20) {
+        return { valid: false, message: 'Enter a realistic expiry year.' };
+    }
+    return { valid: true };
+}
+function validateCvv(value) {
+    const trimmed = value.trim();
+    if (!trimmed) return { valid: false, message: 'CVV/CVC is required.' };
+    if (!/^\d{3}$/.test(trimmed)) return { valid: false, message: 'CVV/CVC must be 3 digits.' };
+    return { valid: true };
 }
 function showSuccess($beforeEl, message, done) {
     $('<div class="alert alert-success" role="alert"></div>')
@@ -69,42 +215,96 @@ function renderNavbar() {
 function handleRegister() {
     const $form = $('#registerForm');
     if (!$form.length) return;
-    clearErrorsOnInput($form);
+
+    const $username = $('#username'), $email = $('#email');
+    const $password = $('#password'), $confirm = $('#check_password');
+
+    $form.on('input change', '#username, #email', function () {
+        $(this).removeClass('is-invalid is-valid');
+    });
+
+    function validateConfirmLive() {
+        const password = $password.val();
+        const confirm = $confirm.val();
+        if (!confirm) {
+            $confirm.removeClass('is-invalid is-valid');
+            return;
+        }
+        if (password === confirm) {
+            setValid($confirm);
+        } else {
+            setInvalid($confirm, 'Passwords do not match.');
+        }
+    }
+
+    $password.on('input', function () {
+        const password = $(this).val();
+        updatePasswordChecklist(password);
+
+        if (!password) {
+            $password.removeClass('is-invalid is-valid');
+        } else if (isPasswordValid(password)) {
+            setValid($password);
+        } else {
+            setInvalid($password, 'Password must meet all requirements below.');
+        }
+
+        if ($confirm.val().length > 0) {
+            validateConfirmLive();
+        }
+    });
+
+    $confirm.on('input', validateConfirmLive);
 
     $form.on('submit', function (event) {
         event.preventDefault();
-        const $username = $('#username'), $email = $('#email');
-        const $password = $('#password'), $confirm = $('#check_password');
         const username = $username.val().trim();
         const email = $email.val().trim().toLowerCase();
         const password = $password.val();
         const confirm = $confirm.val();
         const accounts = getAccounts();
         let isValid = true;
+
         if (!username) { setInvalid($username, 'Username is required.'); isValid = false; }
         else if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) { setInvalid($username, 'Username must be 3-20 characters (letters, numbers, underscores).'); isValid = false; }
         else if (accounts.some(acc => acc.username.toLowerCase() === username.toLowerCase())) { setInvalid($username, 'This username is already taken.'); isValid = false; }
         else setValid($username);
+
         if (!email) { setInvalid($email, 'Email is required.'); isValid = false; }
         else if (!EMAIL_REGEX.test(email)) { setInvalid($email, 'Please enter a valid email address (e.g. user@domain.com).'); isValid = false; }
         else if (accounts.some(acc => acc.email.toLowerCase() === email)) { setInvalid($email, 'An account with this email already exists.'); isValid = false; }
         else setValid($email);
-        if (!password) { setInvalid($password, 'Password is required.'); isValid = false; }
-        else if (!/^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(password)) { setInvalid($password, 'Password must be at least 6 characters and include both letters and numbers.'); isValid = false; }
-        else setValid($password);
+
+        if (!password) {
+            updatePasswordChecklist('', true);
+            setInvalid($password, 'Password is required.');
+            isValid = false;
+        } else if (!isPasswordValid(password)) {
+            updatePasswordChecklist(password, true);
+            setInvalid($password, 'Password must meet all requirements below.');
+            isValid = false;
+        } else {
+            updatePasswordChecklist(password);
+            setValid($password);
+        }
+
         if (!confirm) { setInvalid($confirm, 'Please confirm your password.'); isValid = false; }
         else if (password !== confirm) { setInvalid($confirm, 'Passwords do not match.'); isValid = false; }
         else setValid($confirm);
+
         if (!isValid) return;
+
         const newUser = { username, email, password, phone: '', address: '', bonuses: 1500 };
         accounts.push(newUser);
         saveAccounts(accounts);
         setCurrentUser(newUser);
+        clearCart();
         showSuccess($form, 'Account created! Taking you to your profile...', function () {
             window.location.href = './profile.html';
         });
         $form.trigger('reset');
         $form.find('.form-control').removeClass('is-valid is-invalid');
+        updatePasswordChecklist('');
     });
 }
 function handleLogin() {
@@ -123,6 +323,7 @@ function handleLogin() {
             return;
         }
         setCurrentUser(user);
+        clearCart();
         window.location.href = './profile.html';
     });
 }
@@ -144,7 +345,7 @@ function handleProfile() {
         const phone = $phone.val().trim();
         const address = $address.val().trim();
         if (phone && !isValidPhone(phone)) {
-            setInvalid($phone, 'Enter a valid phone number, e.g. +7 777 123 45 67.');
+            setInvalid($phone, 'Enter a valid phone number, e.g. +7 (777) 123-45-67.');
             return;
         }
         setValid($phone);
@@ -158,45 +359,227 @@ function handleProfile() {
     });
 }
 function handleOrder() {
-    const $form = $('form:first');
-    if (!$form.length || !/order\.html$/.test(window.location.pathname)) return;
+    const $form = $('#orderForm');
+    if (!$form.length) return;
+
+    const $name = $('#name');
+    const $phone = $('#phone');
+    const $address = $('#orderAddress');
+    const $apartment = $('#apartment');
+    const $entrance = $('#entrance');
+    const $floor = $('#floor');
+    const $persons = $('#persons');
+    const $personsError = $('#personsError');
+    const $orderTime = $('#orderTime');
+    const $cardNumber = $('#cardNumber');
+    const $expiry = $('#expiry');
+    const $cvv = $('#cvv');
+
     clearErrorsOnInput($form);
+
+    // Сброс ошибки поля приборов при вводе
+    $persons.on('input change', function () {
+        $personsError.addClass('d-none').text('');
+    });
+
+    // Автоматические маски при вводе
+    $phone.on('input', function () {
+        $(this).val(formatPhoneInput($(this).val()));
+    });
+    $cardNumber.on('input', function () {
+        $(this).val(formatCardNumber($(this).val()));
+    });
+    $expiry.on('input', function () {
+        $(this).val(formatExpiryDate($(this).val()));
+    });
+    $cvv.on('input', function () {
+        $(this).val($(this).val().replace(/\D/g, '').slice(0, 3));
+    });
+    $entrance.on('input', function () {
+        $(this).val($(this).val().replace(/\D/g, '').slice(0, 2));
+    });
+    $floor.on('input', function () {
+        $(this).val($(this).val().replace(/(?!^-)[^\d]/g, '').slice(0, 3));
+    });
+
+    // Мгновенная проверка полей при потере фокуса (blur)
+    $phone.on('blur', function () {
+        const val = $(this).val().trim();
+        if (!val) return;
+        if (isValidPhone(val)) setValid($phone);
+        else setInvalid($phone, 'Enter a valid phone number, e.g. +7 (777) 123-45-67.');
+    });
+    $cardNumber.on('blur', function () {
+        const val = $(this).val().trim();
+        if (!val) return;
+        const res = validateCardNumber(val);
+        if (res.valid) setValid($cardNumber);
+        else setInvalid($cardNumber, res.message);
+    });
+    $expiry.on('blur', function () {
+        const val = $(this).val().trim();
+        if (!val) return;
+        const res = validateExpiry(val);
+        if (res.valid) setValid($expiry);
+        else setInvalid($expiry, res.message);
+    });
+    $cvv.on('blur', function () {
+        const val = $(this).val().trim();
+        if (!val) return;
+        const res = validateCvv(val);
+        if (res.valid) setValid($cvv);
+        else setInvalid($cvv, res.message);
+    });
+
     $form.on('change', 'input[type="radio"][name="address"]', function () {
         const text = $(this).next('label').text();
-        $form.find('input[type="text"][name="address"]').val(text).removeClass('is-invalid');
+        $address.val(text).removeClass('is-invalid is-valid');
     });
     $form.find('input[type="radio"][name="address"]:checked').trigger('change');
+
     $form.on('submit', function (event) {
         event.preventDefault();
-        const $name = $('#name'), $phone = $('#phone');
-        const name = $name.val().trim(), phone = $phone.val().trim();
         let isValid = true;
-        if (name.length < 2) { setInvalid($name, 'Please enter your name (at least 2 characters).'); isValid = false; } else setValid($name);
-        if (!phone) { setInvalid($phone, 'Phone is required.'); isValid = false; }
-        else if (!isValidPhone(phone)) { setInvalid($phone, 'Enter a valid phone number, e.g. +7 777 123 45 67.'); isValid = false; }
-        else setValid($phone);
+
+        // 1. Имя
+        const name = $name.val().trim();
+        if (!name) {
+            setInvalid($name, 'Name is required.');
+            isValid = false;
+        } else if (!/^[a-zA-Zа-яА-ЯёЁ\s\-']{2,50}$/.test(name)) {
+            setInvalid($name, 'Enter a valid name (2–50 letters).');
+            isValid = false;
+        } else {
+            setValid($name);
+        }
+
+        // 2. Телефон
+        const phone = $phone.val().trim();
+        if (!phone) {
+            setInvalid($phone, 'Phone is required.');
+            isValid = false;
+        } else if (!isValidPhone(phone)) {
+            setInvalid($phone, 'Enter a valid phone number, e.g. +7 (777) 123-45-67.');
+            isValid = false;
+        } else {
+            setValid($phone);
+        }
+
+        // 3. Время доставки
+        if (!$orderTime.val()) {
+            setInvalid($orderTime, 'Please select delivery time.');
+            isValid = false;
+        } else {
+            setValid($orderTime);
+        }
+
+        // 4. Адрес
+        const address = $address.val().trim();
+        if (!address) {
+            setInvalid($address, 'Address is required.');
+            isValid = false;
+        } else if (address.length < 5) {
+            setInvalid($address, 'Please enter a full address (at least 5 characters).');
+            isValid = false;
+        } else {
+            setValid($address);
+        }
+
+        // 5. Квартира, подъезд, этаж (необязательные, но проверяются если заполнены)
+        const apartment = $apartment.val().trim();
+        if (apartment && !/^[a-zA-Zа-яА-Я0-9\-\/]{1,6}$/.test(apartment)) {
+            setInvalid($apartment, 'Invalid');
+            isValid = false;
+        } else if (apartment) {
+            setValid($apartment);
+        }
+
+        const entrance = $entrance.val().trim();
+        if (entrance) {
+            const entNum = parseInt(entrance, 10);
+            if (!/^\d+$/.test(entrance) || entNum < 1 || entNum > 30) {
+                setInvalid($entrance, '1–30');
+                isValid = false;
+            } else {
+                setValid($entrance);
+            }
+        }
+
+        const floor = $floor.val().trim();
+        if (floor) {
+            const flNum = parseInt(floor, 10);
+            if (!/^-?\d+$/.test(floor) || flNum < -2 || flNum > 100) {
+                setInvalid($floor, '-2..100');
+                isValid = false;
+            } else {
+                setValid($floor);
+            }
+        }
+
+        // 6. Количество приборов
+        const personsVal = $persons.val().trim();
+        const personsNum = Number(personsVal);
+        if (!personsVal || !Number.isInteger(personsNum) || personsNum < 1 || personsNum > 10) {
+            $persons.addClass('is-invalid').removeClass('is-valid');
+            $personsError.removeClass('d-none').text('Select from 1 to 10 utensils.');
+            isValid = false;
+        } else {
+            setValid($persons);
+            $personsError.addClass('d-none').text('');
+        }
+
+        // 7. Номер карты
+        const cardCheck = validateCardNumber($cardNumber.val());
+        if (!cardCheck.valid) {
+            setInvalid($cardNumber, cardCheck.message);
+            isValid = false;
+        } else {
+            setValid($cardNumber);
+        }
+
+        // 8. Срок действия карты
+        const expiryCheck = validateExpiry($expiry.val());
+        if (!expiryCheck.valid) {
+            setInvalid($expiry, expiryCheck.message);
+            isValid = false;
+        } else {
+            setValid($expiry);
+        }
+
+        // 9. CVV/CVC
+        const cvvCheck = validateCvv($cvv.val());
+        if (!cvvCheck.valid) {
+            setInvalid($cvv, cvvCheck.message);
+            isValid = false;
+        } else {
+            setValid($cvv);
+        }
+
         if (!isValid) return;
+
         const user = getCurrentUser();
-        const applied = parseInt(localStorage.getItem('elite_sushi_applied_bonuses') || '0', 10);
+        const applied = parseInt(localStorage.getItem(APPLIED_BONUSES_KEY) || '0', 10);
         if (user && applied > 0) {
             user.bonuses = Math.max(0, (user.bonuses || 0) - applied);
             setCurrentUser(user);
             const accounts = getAccounts();
             const idx = accounts.findIndex(acc => acc.username.toLowerCase() === user.username.toLowerCase());
             if (idx !== -1) { accounts[idx].bonuses = user.bonuses; saveAccounts(accounts); }
-            localStorage.removeItem('elite_sushi_applied_bonuses');
+            localStorage.removeItem(APPLIED_BONUSES_KEY);
         }
         showSuccess($form, 'Payment successful! Your order has been placed.', function () {
             window.location.href = './index.html';
         });
         $form.trigger('reset');
-        $form.find('.form-control').removeClass('is-valid is-invalid');
+        $form.find('.form-control, .form-select').removeClass('is-valid is-invalid');
+        $personsError.addClass('d-none').text('');
     });
 }
 $(function () {
     $(document).on('click', '#authLogoutBtn', function (event) {
         event.preventDefault();
         setCurrentUser(null);
+        clearCart();
         window.location.href = './index.html';
     });
     initAccounts().always(function () {

@@ -12,34 +12,35 @@
 <body class="bg-black text-white min-vh-100 d-flex align-items-center py-4">
     <div class="container">
         <div class="row justify-content-center">
-                <form action="#" method="POST" class="bg-white text-dark rounded-4 p-4 p-sm-5 border border-danger border-3 shadow-lg">
-                    <button class="btn btn-danger rounded-3 border-0"><a href="./cart.html" class="text-decoration-none text-reset"><- Back</a></button>
-                    <div class="text-center mb-4">
-                        <img src="./img/logo_title.png" width="200px" height="200px" alt="">
-                        <p class="text-secondary small mb-0">Paying for delivery</p>
+            <form id="orderForm" action="#" method="POST" class="bg-white text-dark rounded-4 p-4 p-sm-5 border border-danger border-3 shadow-lg" novalidate>
+                <a href="./cart.html" class="btn btn-danger rounded-3 border-0 text-decoration-none"><- Back</a>
+                <div class="text-center mb-4">
+                    <img src="./img/logo_title.png" width="200px" height="200px" alt="">
+                    <p class="text-secondary small mb-0">Paying for delivery</p>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <input type="radio" class="btn-check" name="deliveryMethod" id="delivery" checked>
+                        <label class="btn btn-outline-danger w-100 fw-semibold" for="delivery">Delivery</label>
                     </div>
-                    <div class="row g-2 mb-3">
-                        <div class="col-6">
-                            <input type="radio" class="btn-check" name="deliveryMethod" id="delivery" checked>
-                            <label class="btn btn-outline-danger w-100 fw-semibold" for="delivery">Delivery</label>
-                        </div>
-                        <div class="col-6">
-                            <input type="radio" class="btn-check" name="deliveryMethod" id="pickup">
-                            <label class="btn btn-outline-danger w-100 fw-semibold" for="pickup">Self-pickup</label>
-                        </div>
+                    <div class="col-6">
+                        <input type="radio" class="btn-check" name="deliveryMethod" id="pickup">
+                        <label class="btn btn-outline-danger w-100 fw-semibold" for="pickup">Self-pickup</label>
                     </div>
-                    <div class="row g-2 mb-3">
-                        <div class="col-6">
-                            <input type="radio" class="btn-check" name="address" id="address1" checked>
-                            <label class="btn btn-outline-danger w-100 fw-semibold" for="address1">Bauyrzhan Momyshuly 2a</label>
-                        </div>
-                        <div class="col-6">
-                            <input type="radio" class="btn-check" name="address" id="address2">
-                            <label class="btn btn-outline-danger w-100 fw-semibold" for="address2">Syganak 11</label>
-                        </div>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <input type="radio" class="btn-check" name="address" id="address1" checked>
+                        <label class="btn btn-outline-danger w-100 fw-semibold" for="address1">Bauyrzhan Momyshuly 2a</label>
                     </div>
-                    <div class="d-flex justify-content-center align-items-center">
-                        <label for="orderTime" class="form-label small fw-semibold text-danger">Delivery time</label>
+                    <div class="col-6">
+                        <input type="radio" class="btn-check" name="address" id="address2">
+                        <label class="btn btn-outline-danger w-100 fw-semibold" for="address2">Syganak 11</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-center align-items-center gap-3">
+                        <label for="orderTime" class="form-label small fw-semibold text-danger mb-0 text-nowrap">Delivery time</label>
                         <select class="form-select border-secondary-subtle" id="orderTime" name="order_time" required>
                             <option value="asap" selected>As soon as possible (~35–45 min.)</option>
                             <optgroup label="Today (step by 30 minutes)">
@@ -72,59 +73,63 @@
                             </optgroup>
                         </select>
                     </div>
-                    <hr class="border-secondary-subtle my-3">
-                    <h6 class="fw-bold text-danger text-uppercase small mb-2">1. Contacts</h6>
-                    <div class="row g-2 mb-3">
-                        <div class="col-12 col-sm-6">
-                            <label class="form-label small fw-semibold mb-1" for="name">Name</label>
-                            <input type="text" id="name" name="name" class="form-control" placeholder="Alimger" required>
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <label class="form-label small fw-semibold mb-1" for="phone">Phone</label>
-                            <input type="tel" id="phone" name="phone" class="form-control" placeholder="+7 777 777-77-77" required>
-                        </div>
+                </div>
+                <hr class="border-secondary-subtle my-3">
+                <h6 class="fw-bold text-danger text-uppercase small mb-2">1. Contacts</h6>
+                <div class="row g-2 mb-3">
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label small fw-semibold mb-1" for="name">Name</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Alimger" required>
                     </div>
-                    <h6 class="fw-bold text-danger text-uppercase small mb-2">2. Address to delivery</h6>
-                    <div class="mb-2">
-                        <input type="text" name="address" class="form-control" placeholder="Street and number of house" required>
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label small fw-semibold mb-1" for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" class="form-control" placeholder="+7 (777) 777-77-77" maxlength="18" required>
                     </div>
-                    <div class="row g-2 mb-3">
-                        <div class="col-4">
-                            <input type="text" class="form-control text-center px-1" placeholder="Apartment">
-                        </div>
-                        <div class="col-4">
-                            <input type="text" class="form-control text-center px-1" placeholder="Entrance">
-                        </div>
-                        <div class="col-4">
-                            <input type="text" class="form-control text-center px-1" placeholder="Floor">
-                        </div>
+                </div>
+                <h6 class="fw-bold text-danger text-uppercase small mb-2">2. Address to delivery</h6>
+                <div class="mb-2">
+                    <input type="text" id="orderAddress" name="address" class="form-control" placeholder="Street and number of house" required>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-4">
+                        <input type="text" id="apartment" class="form-control text-center px-1" placeholder="Apartment" maxlength="6">
                     </div>
-                    <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded mb-3 border">
-                        <span class="small fw-semibold">Count of food tools:</span>
-                        <input type="number" name="persons" class="form-control text-center" value="2" min="1" max="10" style="width: 70px;">
+                    <div class="col-4">
+                        <input type="text" id="entrance" class="form-control text-center px-1" placeholder="Entrance" inputmode="numeric" maxlength="2">
                     </div>
-                    <hr class="border-secondary-subtle my-3">
-                    <h6 class="fw-bold text-danger text-uppercase small mb-2">3. Card info</h6>
-                    <div class="mb-2">
-                        <label for="cardNumber" class="form-label small fw-semibold mb-1">Card number</label>
-                        <input type="text" class="form-control" placeholder="0000 0000 0000 0000" inputmode="numeric" maxlength="19" required>
+                    <div class="col-4">
+                        <input type="text" id="floor" class="form-control text-center px-1" placeholder="Floor" inputmode="numeric" maxlength="3">
                     </div>
-                    <div class="row g-2 mb-4">
-                        <div class="col-6">
-                            <label for="expiry" class="form-label small fw-semibold mb-1">expiry date</label>
-                            <input type="text" class="form-control text-center" placeholder="12/28" inputmode="numeric" maxlength="5" required>
-                        </div>
-                        <div class="col-6">
-                            <label for="cvv" class="form-label small fw-semibold mb-1">CVV/CVC</label>
-                            <input type="password" class="form-control text-center" placeholder="•••" inputmode="numeric" maxlength="3"required>
-                        </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded border">
+                        <label for="persons" class="small fw-semibold mb-0">Count of food tools:</label>
+                        <input type="number" id="persons" name="persons" class="form-control text-center" value="2" min="1" max="10" style="width: 80px;">
                     </div>
-                    <button type="submit" class="btn btn-danger w-100 py-3 fw-bold text-uppercase rounded-3 shadow">Pay for delivery</button>
-                </form>
+                    <div class="text-danger small mt-1 d-none" id="personsError"></div>
+                </div>
+                <hr class="border-secondary-subtle my-3">
+                <h6 class="fw-bold text-danger text-uppercase small mb-2">3. Card info</h6>
+                <div class="mb-2">
+                    <label for="cardNumber" class="form-label small fw-semibold mb-1">Card number</label>
+                    <input type="text" id="cardNumber" class="form-control" placeholder="0000 0000 0000 0000" inputmode="numeric" maxlength="19" required>
+                </div>
+                <div class="row g-2 mb-4">
+                    <div class="col-6">
+                        <label for="expiry" class="form-label small fw-semibold mb-1">Expiry date</label>
+                        <input type="text" id="expiry" class="form-control text-center" placeholder="12/28" inputmode="numeric" maxlength="5" required>
+                    </div>
+                    <div class="col-6">
+                        <label for="cvv" class="form-label small fw-semibold mb-1">CVV/CVC</label>
+                        <input type="password" id="cvv" class="form-control text-center" placeholder="•••" inputmode="numeric" maxlength="3" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-danger w-100 py-3 fw-bold text-uppercase rounded-3 shadow">Pay for delivery</button>
+            </form>
         </div>
     </div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="cart.js"></script>
+<script src="cart.js"></script>
 <script src="auth.js"></script>
 </body>
 </html>

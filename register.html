@@ -56,8 +56,15 @@
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label fw-semibold text-secondary">Password:</label>
-                            <input type="password" id="password" class="form-control" placeholder="At least 6 characters (letters and numbers)">
-                            <div class="invalid-feedback" id="passwordError">Password must be at least 6 characters and include letters & numbers.</div>
+                            <input type="password" id="password" class="form-control" placeholder="Min. 8 chars, upper & lower, number, special char">
+                            <div class="invalid-feedback" id="passwordError">Password must meet all requirements below.</div>
+                            <ul class="list-unstyled small mt-2 mb-0" id="passwordRequirements">
+                                <li id="req-length" class="text-secondary">✗ At least 8 characters</li>
+                                <li id="req-upper" class="text-secondary">✗ At least 1 uppercase letter (A-Z)</li>
+                                <li id="req-lower" class="text-secondary">✗ At least 1 lowercase letter (a-z)</li>
+                                <li id="req-digit" class="text-secondary">✗ At least 1 number (0-9)</li>
+                                <li id="req-special" class="text-secondary">✗ At least 1 special character (!, %, :, *, etc.)</li>
+                            </ul>
                         </div>
                         <div class="mb-4">
                             <label for="check_password" class="form-label fw-semibold text-secondary">Confirm Password:</label>

@@ -2,7 +2,7 @@ const CART_STORAGE_KEY = 'elite_sushi_cart';
 const APPLIED_BONUS_KEY = 'elite_sushi_applied_bonuses';
 function getCartItems() {
     const stored = localStorage.getItem(CART_STORAGE_KEY);
-    return JSON.parse(stored);
+    return JSON.parse(stored || '[]') || [];
 }
 function saveCartItems(items) { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items)); }
 function getAppliedBonuses() { return parseInt(localStorage.getItem(APPLIED_BONUS_KEY) || '0', 10); }
