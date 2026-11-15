@@ -53,10 +53,37 @@ function updatePasswordChecklist(password, forceError = false) {
         }
     });
 }
+function getCartTotalCount() {
+    try {
+        const items = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+        if (!Array.isArray(items)) return 0;
+        return items.reduce(function (sum, item) {
+            return sum + (parseInt(item.count, 10) || 0);
+        }, 0);
+    } catch (e) {
+        return 0;
+    }
+}
+
+function renderCartBadge() {
+    const count = getCartTotalCount();
+    $('.navbar-nav a[href*="cart.html"]').each(function () {
+        const $link = $(this);
+        let $badge = $link.find('.cart-nav-badge');
+        if (!$badge.length) {
+            $badge = $('<span class="badge rounded-pill ms-1 cart-nav-badge"></span>').appendTo($link);
+        }
+        $badge
+            .text(count)
+            .toggleClass('bg-danger', count > 0)
+            .toggleClass('bg-secondary', count === 0);
+    });
+}
 
 function clearCart() {
     localStorage.setItem(CART_KEY, JSON.stringify([]));
     localStorage.removeItem(APPLIED_BONUSES_KEY);
+    renderCartBadge();
 }
 
 function initAccounts() {
@@ -212,6 +239,7 @@ function renderNavbar() {
             $authLi.show();
         }
     });
+       renderCartBadge();
 }
 function handleRegister() {
     const $form = $('#registerForm');
@@ -607,5 +635,11 @@ $(function () {
             'aria-label': isHidden ? 'Hide password' : 'Show password',
             title: isHidden ? 'Hide password' : 'Show password'
         });
+    });
+    renderCartBadge();
+    $(window).on('storage', function (e) {
+        if (e.originalEvent && e.originalEvent.key === CART_KEY) {
+            renderCartBadge();
+        }
     });
 });
