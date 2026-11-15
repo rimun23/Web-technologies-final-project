@@ -43,6 +43,29 @@
         <div class="row justify-content-center">
             <div class="col-12 col-lg-8">
                 <div class="d-flex flex-column gap-3" id="faqList">
+                    <div class="card border-0 rounded shadow-sm mt-4">
+                        <div class="card-header bg-dark text-light py-3">
+                            <h2 class="h5 fw-semibold mb-0">Add Your Own Question</h2>
+                        </div>
+                        <div class="card-body p-3 p-md-4 bg-white">
+                            <form id="addFaqForm" novalidate>
+                                <div class="mb-3">
+                                    <label for="faqQuestionInput" class="form-label fw-semibold">
+                                        Your Question <span class="text-danger">*</span>
+                                    </label>
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            id="faqQuestionInput"
+                                            placeholder="e.g., Do you have vegetarian rolls?"
+                                            required
+                                    >
+                                    <div class="invalid-feedback">Please enter your question.</div>
+                                </div>
+                                <button type="submit" class="btn btn-danger px-4 fw-semibold">Add Question</button>
+                            </form>
+                        </div>
+                    </div>
                     <article class="faq-item bg-white border-0 rounded shadow-sm overflow-hidden">
                         <div class="p-3 border-bottom">
                             <h3 class="faq-question h6 fw-semibold text-dark mb-0">
@@ -108,6 +131,7 @@
     </div>
 </footer>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="faq.js"></script>
 <script src="cart.js"></script>
 <script src="auth.js"></script>
 </body>
